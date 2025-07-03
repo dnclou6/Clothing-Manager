@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Phiếu Giảm Giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body class="bg-light">
+<!-- Navbar tài khoản -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+<div class="d-flex">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+    <div class="content p-4">
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+            <div class="toast align-items-center text-bg-success border-0" role="alert" id="successToast" aria-live="assertive" aria-atomic="true" th:if="${successMessage}">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <span th:text="${successMessage}"></span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TOAST ERROR -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+            <div class="toast align-items-center text-bg-danger border-0" role="alert" id="errorToast" aria-live="assertive" aria-atomic="true" th:if="${errorMessage}">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        <span th:text="${errorMessage}"></span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Phiếu Giảm Giá</h2>
+            <a href="/acvstore/vouchers/create" class="btn btn-primary">+ Tạo Mới</a>
+        </div>
+
+        <form method="get" th:action="@{/admin/vouchers}" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <input type="text" name="search" class="form-control" placeholder="Tìm theo mã hoặc tên...">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="fromDate" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="toDate" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <select name="type" class="form-select">
+                    <option value="">-- Kiểu --</option>
+                    <option value="PERCENT">%</option>
+                    <option value="CASH">Tiền mặt</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="status" class="form-select">
+                    <option value="">-- Trạng thái --</option>
+                    <option value="upcoming">Sắp diễn ra</option>
+                    <option value="active">Đang diễn ra</option>
+                    <option value="expired">Đã kết thúc</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-success w-100">Lọc</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle bg-white">
+                <thead class="table-light">
+                <tr>
+                    <th>STT</th>
+                    <th>MÃ</th>
+                    <th>TÊN</th>
+                    <th>KIỂU</th>
+                    <th>LOẠI</th>
+                    <th>GIÁ TRỊ</th>
+                    <th>GIÁ TRỊ TỐI ĐA</th>
+                    <th>ĐIỀU KIỆN</th>
+                    <th>LƯỢT DÙNG</th>
+                    <th>NGÀY BẮT ĐẦU</th>
+                    <th>NGÀY KẾT THÚC</th>
+                    <th>TRẠNG THÁI</th>
+                    <th>HÀNH ĐỘNG</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${vouchers.isEmpty()}">
+                    <td colspan="13" class="text-center text-muted">Không có phiếu giảm giá nào.</td>
+                </tr>
+                <tr th:each="v, stat : ${vouchers}">
+                    <td th:text="${stat.index + 1}">1</td>
+                    <td th:text="${v.code}"></td>
+                    <td th:text="${v.name}"></td>
+                    <td th:text="${v.type == 'PERCENT' ? '%' : 'Tiền mặt'}"></td>
+                    <td th:text="${v.public == true ? 'Công Khai' : 'Cá Nhân'}"></td>
+                    <td th:text="${v.discountValueFormatted}"></td>
+                    <td th:text="${v.maxDiscountValueFormatted}"></td>
+                    <td th:text="${v.minOrderValueFormatted}"></td>
+                    <td th:text="${v.usageCount}"></td>
+                    <td th:text="${#temporals.format(v.startDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${#temporals.format(v.endDate, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                    <span th:switch="${getStatus.apply(v)}">
+                        <span th:case="'Sắp diễn ra'" class="badge bg-warning text-dark">Sắp diễn ra</span>
+                        <span th:case="'Đang diễn ra'" class="badge bg-success">Đang diễn ra</span>
+                        <span th:case="'Đã kết thúc'" class="badge bg-secondary">Đã kết thúc</span>
+                        <span th:case="*" class="badge bg-light text-dark border">Không xác định</span>
+                    </span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{'/acvstore/vouchers/edit/' + ${v.id}}" class="btn btn-sm btn-outline-primary me-1">✏️</a>
+                        <form th:action="@{'/acvstore/vouchers/delete/' + ${v.id}}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const toastEl = document.getElementById('successToast');
+    if (toastEl) new bootstrap.Toast(toastEl).show();
+    const errorToastEl = document.getElementById('errorToast');
+    if (errorToastEl) new bootstrap.Toast(errorToastEl).show();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/product.js}" defer></script>
+</body>
+</html>

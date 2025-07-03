@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Không có quyền truy cập</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8d7da;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #721c24;
+        }
+        p {
+            color: #721c24;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        a:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🚫 Truy cập bị từ chối!</h1>
+    <p>Bạn không có quyền truy cập vào trang này.</p>
+    <a id="redirectLink" href="/">Quay lại trang đăng nhập</a>
+</div>
+
+<script>
+    // Lấy tham số loginPage từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginPage = urlParams.get('loginPage') || '/customer/login'; // Mặc định là /customer/login nếu không có tham số
+
+    // Cập nhật href của liên kết
+    document.getElementById('redirectLink').href = loginPage;
+</script>
+
+</body>
+</html>

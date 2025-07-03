@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách khách hàng</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<div class="d-flex">
+  <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+  <div class="content">
+    <h2>Danh sách khách hàng</h2>
+    <a href="/acvstore/khachhang/addCustomer" class="btn btn-primary mb-3">Thêm khách hàng</a>
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tên đăng nhập</th>
+        <th>Mật khẩu</th> <!-- Added password column -->
+        <th>Họ tên</th>
+        <th>Email</th>
+        <th>Số điện thoại</th>
+        <th>Ngày sinh</th>
+        <th>Địa chỉ</th>
+        <th>Hành động</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="customer : ${customers}">
+        <td th:text="${customer.id}"></td>
+        <td th:text="${customer.username}"></td> <!-- Sửa từ customer.user.username -->
+        <td th:text="${customer.password}"></td> <!-- Sửa từ customer.user.password -->
+        <td th:text="${customer.fullName}"></td> <!-- Sửa từ customer.user.fullName -->
+        <td th:text="${customer.email}"></td> <!-- Sửa từ customer.user.email -->
+        <td th:text="${customer.phone}"></td> <!-- Sửa từ customer.user.phone -->
+        <td th:text="${customer.dateOfBirth}"></td>
+
+        <td th:text="${customer.province + ', ' + customer.district + ', ' + customer.ward + ', ' + customer.addressDetail}"></td>
+        <td>
+          <a th:href="@{/acvstore/khachhang/edit/{id}(id=${customer.id})}" class="btn btn-warning btn-sm">Sửa</a>
+          <a th:href="@{/acvstore/khachhang/delete/{id}(id=${customer.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa?')">Xóa</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Quản lý hóa đơn</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4cc9f0;
+            --danger-color: #f72585;
+            --warning-color: #f8961e;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-delivering {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-completed {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .status-cancelled {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+        }
+
+        .filter-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead th {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 20px;
+            border: 1px solid #dee2e6;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #6c757d;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .pagination .page-link {
+            color: var(--primary-color);
+        }
+
+        .notification-badge {
+            position: relative;
+            top: -5px;
+            margin-left: 5px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar tài khoản -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0"><i class="fas fa-receipt me-2"></i>Quản lý hóa đơn</h2>
+            <form method="get" th:action="@{/acvstore/hoadon}" class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" class="form-control" name="keyword"
+                       th:value="${keyword}" placeholder="Tìm kiếm...">
+            </form>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Tổng hóa đơn</h6>
+                                <h3 class="mb-0" th:text="${totalOrders}">0</h3>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-receipt text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Chờ xác nhận</h6>
+                                <h3 class="mb-0" th:text="${pendingOrders}">0</h3>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-clock text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Đang xử lý</h6>
+                                <h3 class="mb-0" th:text="${deliveringOrders}">0</h3>
+                            </div>
+                            <div class="bg-info bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-laptop text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted mb-2">Hoàn thành</h6>
+                                <h3 class="mb-0" th:text="${completedOrders}">0</h3>
+                            </div>
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Card -->
+        <div class="filter-card mb-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Redesigning the status filter tabs as buttons -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:classappend="${status == null || status == ''} ? 'active'"
+                           th:href="@{/acvstore/hoadon}">
+                            Tất cả
+                            <span th:if="${totalOrders > 0}"
+                                  class="badge bg-danger notification-badge"
+                                  th:text="${totalOrders}"></span>
+                        </a>
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:classappend="${status == 'Pending'} ? 'active'"
+                           th:href="@{/acvstore/hoadon(status='Pending')}">
+                            Chờ xác nhận
+                            <span th:if="${pendingOrders > 0}"
+                                  class="badge bg-danger notification-badge"
+                                  th:text="${pendingOrders}"></span>
+                        </a>
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:classappend="${status == 'Delivering'} ? 'active'"
+                           th:href="@{/acvstore/hoadon(status='Delivering')}">
+                            Đang xử lý
+                            <span th:if="${deliveringOrders > 0}"
+                                  class="badge bg-danger notification-badge"
+                                  th:text="${deliveringOrders}"></span>
+                        </a>
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:classappend="${status == 'Completed'} ? 'active'"
+                           th:href="@{/acvstore/hoadon(status='Completed')}">
+                            Hoàn thành
+                            <span th:if="${completedOrders > 0}"
+                                  class="badge bg-danger notification-badge"
+                                  th:text="${completedOrders}"></span>
+                        </a>
+                        <a class="btn btn-outline-primary btn-sm"
+                           th:classappend="${status == 'Cancelled'} ? 'active'"
+                           th:href="@{/acvstore/hoadon(status='Cancelled')}">
+                            Đã hủy
+                            <span th:if="${cancelledOrders > 0}"
+                                  class="badge bg-danger notification-badge"
+                                  th:text="${cancelledOrders}"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a th:href="@{/acvstore/hoadon/create}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Tạo hóa đơn
+                    </a>
+                </div>
+            </div>
+
+            <hr>
+
+            <form method="get" th:action="@{/acvstore/hoadon}" class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Khoảng thời gian</label>
+                    <div class="input-group">
+                        <input type="date" class="form-control" name="startDate" th:value="${startDate}">
+                        <span class="input-group-text">đến</span>
+                        <input type="date" class="form-control" name="endDate" th:value="${endDate}">
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Lọc theo</label>
+                    <div class="d-flex">
+                        <select class="form-select me-2" name="deliveryMethod">
+                            <option value="" th:selected="${deliveryMethod == null || deliveryMethod == ''}">Hình thức mua hàng</option>
+                            <option value="Tại quầy" th:selected="${deliveryMethod == 'Tại quầy'}">Tại quầy</option>
+                            <option value="Online" th:selected="${deliveryMethod == 'Online'}">Online</option>
+                        </select>
+
+                        <select class="form-select" name="paymentMethod">
+                            <option value="" th:selected="${paymentMethod == null || paymentMethod == ''}">Phương thức thanh toán</option>
+                            <option value="Tiền mặt" th:selected="${paymentMethod == 'Tiền mặt'}">Tiền mặt</option>
+                            <option value="Chuyển khoản" th:selected="${paymentMethod == 'Chuyển khoản'}">Chuyển khoản</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary me-2">Lọc</button>
+                    <a th:href="@{/acvstore/hoadon}"
+                       class="btn btn-outline-secondary"
+                       th:if="${keyword != null or status != null or startDate != null or endDate != null or deliveryMethod != null or paymentMethod != null}">
+                        Làm mới bộ lọc
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Invoice Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã hóa đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày tạo</th>
+                            <th>Tổng tiền</th>
+                            <th>Tiền ship</th>
+                            <th>Hình thức mua hàng</th>
+                            <th>Thanh toán</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="invoice, iterStat : ${invoices}">
+                            <td th:text="${currentPage * pageSize + iterStat.index + 1}">1</td>
+                            <td>
+                                <a th:href="@{/acvstore/hoadon/{id}(id=${invoice.id})}" class="text-primary fw-bold">
+                                    <span th:text="${invoice.code}"></span>
+                                </a>
+                            </td>
+                            <td th:text="${invoice.user.fullName}">Khách hàng</td>
+                            <td th:text="${#temporals.format(invoice.createdAt, 'dd/MM/yyyy')}">25/12/2023</td>
+                            <td class="fw-bold" th:text="${invoice.formattedTotal}">178.000 đ</td>
+                            <td th:text="${invoice.formattedShippingFee}">10.000 đ</td>
+                            <td th:text="${invoice.deliveryMethod}"></td>
+                            <td>
+                            <span th:if="${invoice.paymentMethod == 'Tiền mặt'}" class="badge bg-success">
+                                <i class="fas fa-money-bill-wave me-1"></i>
+                                <span th:text="${invoice.paymentMethod}">Tiền mặt</span>
+                            </span>
+                                <span th:if="${invoice.paymentMethod == 'Chuyển khoản'}" class="badge bg-primary">
+                                <i class="fas fa-university me-1"></i>
+                                <span th:text="${invoice.paymentMethod}">Chuyển khoản</span>
+                            </span>
+                                <span th:if="${invoice.paymentMethod == 'VNPay'}" class="badge bg-danger">
+                                <i class="fas fa-money-bill-wave me-1"></i>
+                                <span th:text="${invoice.paymentMethod}">VNPay</span>
+                            </span>
+                                <span th:if="${invoice.paymentMethod != 'Tiền mặt' and invoice.paymentMethod != 'Chuyển khoản' and invoice.paymentMethod != 'VNPay'}"
+                                      class="badge bg-secondary">
+                                <i class="fas fa-question-circle me-1"></i>
+                                <span>Không xác định</span>
+                            </span>
+                            </td>
+                            <td>
+                            <span th:classappend="${invoice.status == 'Pending'} ? 'status-Pending' :
+                                                   (${invoice.status == 'Delivering'} ? 'status-Delivering' :
+                                                   (${invoice.status == 'Completed'} ? 'status-Completed' : 'status-Cancelled'))"
+                                  class="status-badge">
+                                <i th:if="${invoice.status == 'Pending'}" class="fas fa-clock me-1 bg-warning"></i>
+                                <i th:if="${invoice.status == 'Delivering'}" class="fas fa-laptop me-1 bg-primary"></i>
+                                <i th:if="${invoice.status == 'Completed'}" class="fas fa-check-circle me-1 bg-success"></i>
+                                <i th:if="${invoice.status == 'Cancelled'}" class="fas fa-times-circle me-1 bg-danger"></i>
+                                <span th:text="${invoice.statusDisplay}">Hoàn thành</span>
+                            </span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" th:href="@{/acvstore/hoadon/{id}(id=${invoice.id})}">
+                                                <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" th:href="@{/acvstore/hoadon/delete/{id}(id=${invoice.id})}"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa hóa đơn này không?');">
+                                                <i class="fas fa-trash-alt me-2"></i>Xóa
+                                            </a>
+                                        </li>
+                                        <li th:if="${invoice.status == 'Pending'}">
+                                            <a class="dropdown-item text-success"
+                                               th:href="@{/acvstore/hoadon/confirm/{id}(id=${invoice.id})}">
+                                                <i class="fas fa-check me-2"></i>Xác nhận
+                                            </a>
+                                        </li>
+                                        <li th:if="${invoice.status == 'Pending'}">
+                                            <a class="dropdown-item text-danger"
+                                               th:href="@{/acvstore/hoadon/cancel/{id}(id=${invoice.id})}"
+                                               onclick="return confirm('Bạn có chắc chắn muốn hủy hóa đơn này không?');">
+                                                <i class="fas fa-times me-2"></i>Hủy đơn
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav th:if="${totalPages > 1}" aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Nút trang trước -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/acvstore/hoadon(
+                    page=${currentPage - 1},
+                    keyword=${keyword},
+                    status=${status},
+                    startDate=${startDate},
+                    endDate=${endDate},
+                    deliveryMethod=${deliveryMethod},
+                    paymentMethod=${paymentMethod}
+                )}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Số trang -->
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:classappend="${currentPage == i} ? 'active'">
+                            <a class="page-link" th:text="${i + 1}"
+                               th:href="@{/acvstore/hoadon(
+                    page=${i},
+                    keyword=${keyword},
+                    status=${status},
+                    startDate=${startDate},
+                    endDate=${endDate},
+                    deliveryMethod=${deliveryMethod},
+                    paymentMethod=${paymentMethod}
+               )}">
+                            </a>
+                        </li>
+
+                        <!-- Nút trang tiếp -->
+                        <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                            <a class="page-link" th:href="@{/acvstore/hoadon(
+                    page=${currentPage + 1},
+                    keyword=${keyword},
+                    status=${status},
+                    startDate=${startDate},
+                    endDate=${endDate},
+                    deliveryMethod=${deliveryMethod},
+                    paymentMethod=${paymentMethod}
+                )}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Custom JS -->
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+</script>
+<!-- Gọi JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

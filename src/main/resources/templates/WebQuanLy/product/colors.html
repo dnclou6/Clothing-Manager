@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Màu sắc</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+    <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+</nav>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <!-- Content -->
+    <div class="content p-4">
+        <h2 class="text-center my-4">Danh sách Màu sắc</h2>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="mb-3">
+            <form th:action="@{/acvstore/colors}" method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm theo tên màu..." th:value="${param.search}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Tìm
+                </button>
+            </form>
+        </div>
+
+        <!-- Nút Thêm Màu Mới -->
+        <div class="mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#colorModal" onclick="resetModal()">
+                <i class="fas fa-plus"></i> Thêm Màu Mới
+            </button>
+        </div>
+
+        <!-- Bảng Màu Sắc -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên màu</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="color : ${colors}">
+                    <td th:text="${color.id}"></td>
+                    <td th:text="${color.name}"></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm btn-custom"
+                                data-bs-toggle="modal"
+                                data-bs-target="#colorModal"
+                                th:attr="data-id=${color.id},data-name=${color.name}"
+                                onclick="fillModal(this)">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+                        <a th:href="@{/acvstore/colors/delete/{id}(id=${color.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Màu -->
+<div class="modal fade" id="colorModal" tabindex="-1" aria-labelledby="colorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="colorModalLabel">Thêm Màu Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/acvstore/colors/save}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="colorId">
+                    <div class="mb-3">
+                        <label for="colorName" class="form-label">Tên màu</label>
+                        <input type="text" name="name" id="colorName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+<script>
+    function resetModal() {
+        document.getElementById('colorModalLabel').textContent = 'Thêm Màu Mới';
+        document.getElementById('colorId').value = '';
+        document.getElementById('colorName').value = '';
+    }
+
+    function fillModal(button) {
+        document.getElementById('colorModalLabel').textContent = 'Sửa Màu sắc';
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        document.getElementById('colorId').value = id;
+        document.getElementById('colorName').value = name;
+    }
+</script>
+</body>
+</html>

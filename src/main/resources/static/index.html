@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot AI - ACVStore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #chatBox {
+            border: 1px solid #ccc;
+            padding: 15px;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        #userInput {
+            width: 70%;
+        }
+    </style>
+</head>
+<body>
+<h1>Chatbot AI - ACVStore</h1>
+<div id="chatBox"></div>
+<input type="text" id="userInput" placeholder="Nhập câu hỏi...">
+<button onclick="callChat()">Gửi</button>
+
+<script>
+    const message = [
+        {
+            role: 'system',
+            content: 'Bạn cần gì ở tôi?'
+        }
+    ];
+
+    async function callChat() {
+        const input = document.getElementById("userInput");
+        const chatBox = document.getElementById("chatBox");
+        const userText = input.value.trim();
+        if (!userText) return;
+
+        // Thêm tin nhắn người dùng vào UI
+        chatBox.innerHTML += `<p><strong>Bạn:</strong> ${userText}</p>`;
+        input.value = "";
+
+        message.push({ role: "user", content: userText });
+
+        try {
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await res.json();
+            if (data.reply) {
+                message.push({ role: "assistant", content: data.reply });
+                chatBox.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+            } else {
+                chatBox.innerHTML += `<p><strong>Lỗi:</strong> ${data.error || "Không có phản hồi"}</p>`;
+            }
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } catch (err) {
+            chatBox.innerHTML += `<p><strong>Lỗi:</strong> ${err.message}</p>`;
+        }
+    }
+</script>
+</body>
+</html>

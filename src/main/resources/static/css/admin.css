@@ -1,0 +1,201 @@
+/* General Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    padding-top: 60px;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(12px);
+    font-size: 14px;
+    border-radius: 10px 0 0 10px;
+    max-height: 100vh; /* Giới hạn chiều cao */
+    overflow-y: auto;   /* Cho phép cuộn dọc */
+}
+.sidebar::-webkit-scrollbar {
+    width: 0;
+}
+
+
+.sidebar-header {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+    color: #3b82f6;
+}
+
+/* Sidebar Links */
+.nav-link {
+    color: #555;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.nav-link i {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.nav-link:hover {
+    background-color: #d1d9e6;
+    transform: translateX(7px);
+}
+
+/* Active Sidebar Item */
+.nav-link.active {
+    color: #2563eb;
+    font-weight: 700;
+    border-left: 5px solid #2563eb;
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* Logout Button */
+.logout {
+    margin-top: auto;
+    text-align: center;
+}
+
+.logout a {
+    font-weight: bold;
+}
+
+/* Main Content */
+.content {
+    margin-left: 260px;
+    padding: 20px;
+    width: calc(100% - 260px);
+}
+
+/* Table Styling */
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    padding: 12px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+/* Button Styling */
+.btn {
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* Notification Styles */
+.notification-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease-in-out;
+}
+
+.notification-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.notification-time {
+    color: #888;
+    font-size: 13px;
+}
+
+
+.breadcrumb-container {
+    display: flex;
+    justify-content: flex-end; /* Đưa breadcrumb về góc phải */
+    padding: 10px;
+}
+
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.btn-clear {
+    margin-bottom: 15px;
+}
+
+.icon-box {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+}
+
+/* Dashboard Card Styles */
+.stats-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    padding: 20px;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .content {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+}

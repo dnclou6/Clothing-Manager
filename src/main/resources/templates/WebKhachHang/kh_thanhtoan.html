@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán - ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">ACV 360</a>
+    </div>
+</nav>
+
+<div class="container my-4">
+    <h2>Thanh toán</h2>
+    <form id="checkoutForm">
+        <div class="mb-3">
+            <label for="fullname" class="form-label">Họ và tên</label>
+            <input type="text" class="form-control" id="fullname" required>
+        </div>
+        <div class="mb-3">
+            <label for="address" class="form-label">Địa chỉ nhận hàng</label>
+            <input type="text" class="form-control" id="address" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input type="tel" class="form-control" id="phone" required>
+        </div>
+
+        <h5>Phương thức thanh toán</h5>
+        <select class="form-select" id="paymentMethod" required>
+            <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+            <option value="VNPAY">Ví điện tử VNPAY</option>
+            <option value="CARD">Thẻ ngân hàng</option>
+        </select>
+
+        <h5 class="mt-3">Đơn vị vận chuyển</h5>
+        <select class="form-select" id="shippingMethod" required onchange="updateTotal()">
+            <option value="GHN" data-price="30000">Giao Hàng Nhanh - 30.000 VNĐ</option>
+            <option value="GHTK" data-price="25000">Giao Hàng Tiết Kiệm - 25.000 VNĐ</option>
+            <option value="VNPost" data-price="20000">VNPost - 20.000 VNĐ</option>
+        </select>
+
+        <h5 class="mt-3">Mã giảm giá</h5>
+        <div class="input-group">
+            <input type="text" class="form-control" id="discountCode" placeholder="Nhập mã giảm giá">
+            <button type="button" class="btn btn-primary" onclick="applyDiscount()">Áp dụng</button>
+        </div>
+        <p id="discountMessage" class="text-success mt-2"></p>
+
+        <h4 class="mt-3">Tổng tiền: <span id="totalPrice">0</span> VNĐ</h4>
+
+        <!-- Nút quay lại giỏ hàng -->
+        <button type="button" class="btn btn-secondary mt-3" onclick="goToCart()">🛒 Quay lại giỏ hàng</button>
+        <button type="submit" class="btn btn-success mt-3">Đặt hàng</button>
+    </form>
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let discountValue = 0;
+    const validDiscounts = { "GIAM50": 50000, "SALE20": 20000 };
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
+            alert('Bạn cần đăng nhập để tiếp tục!');
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('fullname').value = currentUser.fullname || '';
+            document.getElementById('address').value = currentUser.address || '';
+            document.getElementById('phone').value = currentUser.phone || '';
+        }
+        updateTotal();
+    });
+
+    function updateTotal() {
+        let total = cart.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+        let shippingFee = parseInt(document.getElementById('shippingMethod').selectedOptions[0].dataset.price);
+        let finalTotal = total + shippingFee - discountValue;
+
+        document.getElementById('totalPrice').textContent = finalTotal.toLocaleString();
+    }
+
+    function applyDiscount() {
+        let code = document.getElementById('discountCode').value.trim();
+        if (validDiscounts[code]) {
+            discountValue = validDiscounts[code];
+            document.getElementById('discountMessage').textContent = `Mã giảm giá áp dụng thành công! Giảm ${discountValue.toLocaleString()} VNĐ.`;
+        } else {
+            discountValue = 0;
+            document.getElementById('discountMessage').textContent = 'Mã giảm giá không hợp lệ.';
+        }
+        updateTotal();
+    }
+
+    function goToCart() {
+        window.location.href = 'giohang.html';
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (cart.length === 0) {
+            alert('Giỏ hàng trống!');
+            return;
+        }
+
+        const order = {
+            id: 'DH' + new Date().getTime(),
+            fullname: document.getElementById('fullname').value,
+            address: document.getElementById('address').value,
+            phone: document.getElementById('phone').value,
+            paymentMethod: document.getElementById('paymentMethod').value,
+            shippingMethod: document.getElementById('shippingMethod').value,
+            cart: cart,
+            discount: discountValue,
+            total: parseInt(document.getElementById('totalPrice').textContent.replace(/\D/g, '')),
+            status: 'Chờ xác nhận',
+            date: new Date().toLocaleString()
+        };
+
+        let orders = JSON.parse(localStorage.getItem('orders')) || [];
+        orders.push(order);
+        localStorage.setItem('orders', JSON.stringify(orders));
+        localStorage.removeItem('cart');
+
+        alert('Đặt hàng thành công! Đơn hàng đang chờ xác nhận.');
+        window.location.href = 'donhang.html';
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/"><i class="fa-solid fa-shirt"></i> Duc Long Store</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item"><a class="nav-link fw-semibold" href="/"><i class="fa-solid fa-house me-1"></i>Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="/products"><i class="fa-solid fa-box me-1"></i>Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link fw-semibold" href="/cart"><i class="fa-solid fa-cart-shopping me-1"></i>Giỏ hàng</a></li>
+
+                <li class="nav-item mx-2">
+                    <form class="d-flex position-relative" action="/search" method="get">
+                        <input class="form-control form-control-sm rounded-pill ps-3" type="search" placeholder="Tìm kiếm..." name="query" aria-label="Search" style="width: 200px;">
+                        <button class="btn btn-sm bg-transparent border-0 position-absolute end-0 top-50 translate-middle-y me-2 rounded-circle" type="submit" style="padding: 6px 10px;">
+                            <i class="fa-solid fa-search text-light"></i>
+                        </button>
+                    </form>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-semibold" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-user me-1"></i> Tài khoản
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="/profile"><i class="fa-solid fa-id-badge me-2"></i>Thông tin tài khoản</a></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fa-solid fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<h2>User Details</h2>
+<div id="user-detail">
+    <p><strong>ID:</strong> <span id="user-id"></span></p>
+    <p><strong>Username:</strong> <span id="user-username"></span></p>
+    <p><strong>Full Name:</strong> <span id="user-fullname"></span></p>
+    <p><strong>Email:</strong> <span id="user-email"></span></p>
+    <p><strong>Phone:</strong> <span id="user-phone"></span></p>
+    <p><strong>Address:</strong> <span id="user-address"></span></p>
+    <p><strong>Role:</strong> <span id="user-role"></span></p>
+    <p><strong>Created At:</strong> <span id="user-created-at"></span></p>
+</div>
+<button onclick="goBack()">Back</button>
+
+<script>
+    // Fetch user details from API and populate the fields
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        if (userId) {
+            fetch(`/api/users/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    document.getElementById("user-id").textContent = user.id;
+                    document.getElementById("user-username").textContent = user.username;
+                    document.getElementById("user-fullname").textContent = user.full_name;
+                    document.getElementById("user-email").textContent = user.email;
+                    document.getElementById("user-phone").textContent = user.phone;
+                    document.getElementById("user-address").textContent = user.address;
+                    document.getElementById("user-role").textContent = user.role;
+                    document.getElementById("user-created-at").textContent = user.created_at;
+                })
+                .catch(error => console.error("Error fetching user details:", error));
+        }
+    });
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<footer>
+    &copy; 2025 Cửa hàng thời trang | Duc Long
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

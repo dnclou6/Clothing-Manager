@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Box - Nhân viên | ACV 360</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/employee.css}">
+
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background-color: #f8f9fa; }
+    .content { margin-left: 250px; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div th:replace="~{fragments/employee_sidebar :: sidebar}"></div>
+</div>
+
+<!-- Nội dung -->
+<div class="content">
+  <h2><i class="fa-solid fa-comments"></i> Chat với Khách hàng</h2>
+
+  <div class="chat-box" id="chatBox">
+    <div class="message staff">
+      <img src="https://via.placeholder.com/40" class="avatar" alt="Nhân viên">
+      <p>Chào bạn! Tôi có thể giúp gì không?</p>
+    </div>
+  </div>
+
+  <div class="d-flex">
+    <input type="text" id="chatInput" class="form-control me-2" placeholder="Nhập tin nhắn..." onkeypress="handleKeyPress(event)">
+    <button class="btn btn-primary" onclick="sendMessage()">Gửi</button>
+  </div>
+</div>
+
+<script>
+  function sendMessage() {
+    var input = document.getElementById("chatInput");
+    var message = input.value.trim();
+    if (message !== "") {
+      var chatBox = document.getElementById("chatBox");
+
+      // Hiển thị tin nhắn của người dùng
+      var userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.innerHTML = '<p>' + message + '</p> <img src="https://via.placeholder.com/40" class="avatar" alt="Bạn">';
+      chatBox.appendChild(userMsg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      input.value = "";
+
+      // Hiển thị hiệu ứng gõ
+      var typingIndicator = document.createElement("div");
+      typingIndicator.className = "message staff typing";
+      typingIndicator.innerHTML = '<img src="https://via.placeholder.com/40" class="avatar" alt="Nhân viên"> <p>Đang gõ...</p>';
+      chatBox.appendChild(typingIndicator);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Tạo phản hồi từ nhân viên sau 1 giây
+      setTimeout(() => {
+        chatBox.removeChild(typingIndicator);
+        var staffReply = document.createElement("div");
+        staffReply.className = "message staff";
+        staffReply.innerHTML = '<img src="https://via.placeholder.com/40" class="avatar" alt="Nhân viên"> <p>Cảm ơn bạn đã liên hệ, chúng tôi sẽ hỗ trợ ngay!</p>';
+        chatBox.appendChild(staffReply);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 1000);
+    }
+  }
+
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+  }
+</script>
+<!-- Gọi JavaScript -->
+<script th:src="@{/js/sidebar.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

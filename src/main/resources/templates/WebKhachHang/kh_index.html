@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>160Store - Trang chủ</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- SwiperJS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<style>
+    /* ===== BASE STYLES ===== */
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        padding-top: 145px;
+        background-color: #f9f9f9;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* ===== HEADER STYLES ===== */
+    .top-voucher-marquee {
+        background-color: #f8f8f8;
+        color: #000;
+        padding: 6px 0;
+        font-size: 13px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .hs-header-top {
+        background-color: #000;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 20px;
+    }
+
+    .hs-logo img {
+        width: 110px;
+    }
+
+    .hs-search-box {
+        flex: 1;
+        display: flex;
+        margin: 0 20px;
+        max-width: 600px;
+    }
+
+    .hs-search-box input {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 4px 0 0 4px;
+        font-size: 14px;
+    }
+
+    .hs-search-box button {
+        background-color: #fff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+    .hs-search-box button i {
+        color: black;
+        font-size: 16px;
+    }
+
+    .hs-icons {
+        display: flex;
+        gap: 25px;
+        font-size: 13px;
+    }
+
+    .hs-icon-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .hs-icon-item i {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .hs-cart-count {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: red;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 10px;
+        color: white;
+    }
+
+    .hs-nav-menu {
+        background-color: white;
+        color: black;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: center;
+    }
+
+    .hs-nav-menu ul {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        font-weight: bold;
+        padding: 12px 0;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .hs-highlight {
+        color: red;
+    }
+
+    .hs-new {
+        color: red;
+        font-size: 10px;
+        position: absolute;
+        top: -8px;
+        right: -20px;
+    }
+
+    .hs-header-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ===== BANNER SLIDER ===== */
+    .hs-banner-slider {
+        width: 100%;
+        background: #f2f2f2;
+    }
+
+    .hs-banner-slider .swiper {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .hs-banner-slider .swiper-slide img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 8px;
+    }
+
+    .banner-slider .swiper-button-next,
+    .banner-slider .swiper-button-prev {
+        color: white;
+        background: rgba(0,0,0,0.5);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+
+    .banner-slider .swiper-button-prev {
+        left: 20px;
+    }
+
+    .banner-slider .swiper-button-next {
+        right: 20px;
+    }
+
+    .banner-slider .swiper-pagination-bullet {
+        background: white;
+        opacity: 0.6;
+    }
+
+    .banner-slider .swiper-pagination-bullet-active {
+        background: white;
+        opacity: 1;
+    }
+
+    /* ===== VOUCHER SECTION ===== */
+    .voucher-section {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 10px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .voucher-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        border-left: 4px solid #000;
+        padding-left: 10px;
+        margin-bottom: 20px;
+    }
+
+    .voucher-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 16px 0;
+    }
+
+    .voucher-item {
+        display: flex;
+        width: 260px;
+        background: #fff;
+        border-radius: 8px;
+        border-left: 10px solid #ffc107;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        overflow: hidden;
+        font-size: 13px;
+    }
+
+    .voucher-left {
+        width: 50px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border-right: 1px solid #eee;
+    }
+
+    .voucher-right {
+        padding: 6px 10px;
+        flex: 1;
+    }
+
+    .voucher-title {
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .voucher-desc,
+    .voucher-code,
+    .voucher-exp {
+        margin-top: 2px;
+    }
+
+    .voucher-btn {
+        margin-top: 4px;
+        font-size: 12px;
+        background: #000;
+        color: #fff;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .voucher-btn:hover {
+        background: #333;
+    }
+
+    .voucher-item.freeship {
+        width: 260px;
+        background: #ffb100;
+        color: #000;
+        display: flex;
+        border-radius: 8px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 13px;
+        border-left: 10px solid #ffb100;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .freeship-content {
+        padding: 6px 10px;
+    }
+
+    .freeship-title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .freeship-sub {
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    /* ===== PRODUCT SECTIONS ===== */
+    .container {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .banner {
+        max-width: 1300px;
+        margin: 30px auto 0;
+        padding: 0 20px;
+    }
+
+    .banner img {
+        width: 100%;
+        border-radius: 12px;
+        display: block;
+    }
+
+    .grid,
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+    }
+
+    .card,
+    .product-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 12px;
+        text-align: center;
+        transition: transform 0.3s;
+        position: relative;
+    }
+
+    .card:hover,
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .image-wrapper {
+        position: relative;
+    }
+
+    .card img,
+    .product-card img {
+        width: 100%;
+        border-radius: 8px;
+        transition: opacity 0.3s;
+    }
+
+    .card img:hover,
+    .product-card img:hover {
+        opacity: 0.9;
+    }
+
+    .cart-icon {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: white;
+        border-radius: 50%;
+        padding: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s;
+        z-index: 2;
+    }
+
+    .cart-icon img {
+        width: 18px;
+        height: 18px;
+    }
+
+    .cart-icon:hover {
+        transform: scale(1.05);
+    }
+
+    .badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: orange;
+        color: white;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .card h4,
+    .product-card h4 {
+        font-size: 14px;
+        margin: 10px 0 5px;
+        min-height: 38px;
+        color: #333;
+    }
+
+    .price {
+        color: #e53935;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .see-all {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .see-all a {
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        background: black;
+        padding: 12px 24px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s ease;
+        display: inline-block;
+    }
+
+    .see-all a:hover {
+        background: #333;
+    }
+
+    /* ===== FLASH SALE SECTION ===== */
+    .flash-sale-section {
+        background: #f3f3f3;
+        padding: 30px;
+        border-radius: 12px;
+        margin: 30px auto;
+        max-width: 1300px;
+    }
+
+    .flash-sale-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .flash-sale-header h2 {
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .flash-timer {
+        display: flex;
+        gap: 10px;
+    }
+
+    .flash-timer div {
+        background: #fff;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .flash-timer span {
+        font-size: 20px;
+        color: red;
+    }
+
+    .flash-sale-swiper {
+        margin-top: 20px;
+        padding: 0 40px 30px;
+        position: relative;
+    }
+
+    .flash-sale .swiper-slide {
+        background: #fff;
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+        position: relative;
+    }
+
+    .flash-sale .swiper-slide:hover {
+        transform: translateY(-5px);
+    }
+
+    .flash-sale .status {
+        font-size: 13px;
+        margin-top: 4px;
+        color: #666;
+    }
+
+    .progress-bar {
+        background: #eee;
+        height: 6px;
+        border-radius: 10px;
+        margin-top: 4px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        background: orange;
+        transition: width 0.5s ease;
+    }
+
+    del {
+        font-size: 13px;
+        color: gray;
+        margin-left: 5px;
+    }
+
+    .discount {
+        background: #ffefef;
+        color: red;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    /* ===== MODAL STYLES ===== */
+    .modal-product-info {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .modal-product-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .size-options {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .size-option {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .size-option.active {
+        background-color: #000;
+        color: white;
+        border-color: #000;
+    }
+
+    .size-option:hover:not(.active) {
+        background-color: #f5f5f5;
+    }
+
+    .quantity-selection {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quantity-btn {
+        width: 30px;
+        height: 30px;
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quantity-btn:hover {
+        background: #e9ecef;
+    }
+
+    .quantity-input {
+        width: 50px;
+        text-align: center;
+        padding: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    /* ===== FOOTER STYLES ===== */
+    footer.bg-dark {
+        background-color: #212529 !important;
+        color: white;
+        padding-top: 3rem;
+        padding-bottom: 2rem;
+    }
+
+    footer .text-warning {
+        color: #ffc107 !important;
+    }
+
+    footer .text-white {
+        color: white !important;
+    }
+
+    footer .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #212529;
+        font-weight: bold;
+    }
+
+    footer .btn-warning:hover {
+        background-color: #e0a800;
+        border-color: #d39e00;
+    }
+
+    footer .form-control {
+        background-color: #495057;
+        border-color: #6c757d;
+        color: white;
+    }
+
+    footer .form-control:focus {
+        background-color: #495057;
+        color: white;
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+
+    footer img {
+        margin-right: 10px;
+        margin-bottom: 10px;
+        height: 40px;
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+
+    footer img:hover {
+        opacity: 1;
+    }
+
+    footer .list-unstyled li {
+        margin-bottom: 0.5rem;
+    }
+
+    footer .list-unstyled a {
+        color: #adb5bd;
+        transition: color 0.2s;
+    }
+
+    footer .list-unstyled a:hover {
+        color: #ffc107;
+        text-decoration: none;
+    }
+
+    footer .mt-2 {
+        margin-top: 0.5rem !important;
+    }
+
+    footer .mt-3 {
+        margin-top: 1rem !important;
+    }
+
+    footer .mt-4 {
+        margin-top: 1.5rem !important;
+    }
+
+    footer .mt-5 {
+        margin-top: 3rem !important;
+    }
+
+    footer .pt-5 {
+        padding-top: 3rem !important;
+    }
+
+    footer .pb-4 {
+        padding-bottom: 1.5rem !important;
+    }
+
+    footer .text-center {
+        text-align: center !important;
+    }
+
+    footer .row > div {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Payment methods alignment */
+    footer .col-md-6:last-child {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    /* ===== PRODUCT CATEGORIES ===== */
+    .hs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .hs-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .hs-category-box {
+        background: #fff;
+        border-radius: 8px;
+        flex: 1;
+        min-width: 500px;
+        max-width: 100%;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .hs-category-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .hs-category-header h2 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: #333;
+        position: relative;
+        padding-left: 10px;
+    }
+
+    .hs-category-header h2:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 70%;
+        width: 3px;
+        background-color: #000;
+    }
+
+    .hs-view-all {
+        color: #666;
+        font-size: 14px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .hs-view-all:hover {
+        color: #000;
+    }
+
+    .hs-swiper {
+        padding: 15px 20px 30px;
+    }
+
+    .hs-product-card {
+        text-align: left;
+        background: #fff;
+        border-radius: 4px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s;
+    }
+
+    .hs-product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .hs-product-image {
+        position: relative;
+        overflow: hidden;
+        border-radius: 4px;
+        margin-bottom: 12px;
+    }
+
+    .hs-product-card img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .hs-product-card:hover img {
+        transform: scale(1.03);
+    }
+
+    .hs-product-name {
+        margin: 0 0 5px;
+        font-size: 14px;
+        color: #333;
+        font-weight: 400;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 40px;
+    }
+
+    .hs-product-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        top: 40%;
+        color: #000;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .swiper-button-prev:after,
+    .swiper-button-next:after {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .hs-swiper:hover .swiper-button-prev,
+    .hs-swiper:hover .swiper-button-next {
+        opacity: 1;
+    }
+
+    .swiper-pagination {
+        position: relative;
+        margin-top: 15px;
+    }
+
+    .swiper-pagination-bullet {
+        width: 8px;
+        height: 8px;
+        background: #ddd;
+        opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+        background: #000;
+    }
+
+    .hs-cart-btn {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .hs-cart-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .hs-cart-btn i {
+        font-size: 16px;
+        color: #000;
+    }
+
+    /* ===== RESPONSIVE STYLES ===== */
+    @media (max-width: 1200px) {
+        .grid,
+        .product-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .voucher-item {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hs-nav-menu ul {
+            gap: 20px;
+            font-size: 13px;
+        }
+
+        .grid,
+        .product-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .flash-sale-swiper {
+            padding: 0 20px 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding-top: 120px;
+        }
+
+        .hs-header-top {
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .hs-search-box {
+            order: 3;
+            width: 100%;
+            margin: 10px 0 0 0;
+        }
+
+        .hs-nav-menu ul {
+            gap: 15px;
+            font-size: 12px;
+            padding: 8px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .grid,
+        .product-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .flash-sale-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .voucher-list {
+            flex-direction: column;
+        }
+
+        .hs-category-box {
+            min-width: 100%;
+        }
+
+        .hs-product-card img {
+            height: 200px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        body {
+            padding-top: 110px;
+        }
+
+        .hs-icons {
+            gap: 15px;
+        }
+
+        .grid,
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card h4,
+        .product-card h4 {
+            font-size: 13px;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+
+        .flash-sale-swiper {
+            padding: 0 10px 20px;
+        }
+
+        footer .row > div {
+            margin-bottom: 2rem;
+        }
+    }
+</style>
+
+<body>
+
+<!-- Modal Thêm vào giỏ hàng -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Thêm vào giỏ hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-product-info">
+                    <img id="modalProductImage" src="" alt="Product Image" class="modal-product-img">
+                    <div>
+                        <h6 id="modalProductName"></h6>
+                        <p id="modalProductPrice" class="text-danger fw-bold"></p>
+                    </div>
+                </div>
+
+                <div class="size-selection mt-4">
+                    <h6>Chọn size:</h6>
+                    <div class="size-options">
+                        <button class="size-option active">S</button>
+                        <button class="size-option">M</button>
+                        <button class="size-option">L</button>
+                        <button class="size-option">XL</button>
+                    </div>
+                </div>
+
+                <div class="quantity-selection mt-4">
+                    <h6>Số lượng:</h6>
+                    <div class="quantity-control">
+                        <button class="quantity-btn minus">-</button>
+                        <input type="number" value="1" min="1" class="quantity-input">
+                        <button class="quantity-btn plus">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="confirmAddToCart">Thêm vào giỏ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hs-header-wrapper">
+    <!-- Thanh voucher chạy -->
+    <div class="top-voucher-marquee">
+        <marquee behavior="scroll" direction="left" scrollamount="6">
+            🎁 VOUCHER 10% TỐI ĐA 10K &nbsp;&nbsp;&nbsp;
+            🎁 VOUCHER 50K ĐƠN TỪ 699K &nbsp;&nbsp;&nbsp;
+            🎁 VOUCHER 80K ĐƠN TỪ 999K
+        </marquee>
+    </div>
+
+    <!-- Header ĐEN -->
+    <div class="hs-header-top">
+        <div class="hs-logo">
+            <img src="logo.png" alt="ACVACV">
+        </div>
+
+        <div class="hs-search-box">
+            <input type="text" placeholder="Bạn đang tìm gì...">
+            <button><i class="fa fa-search"></i></button>
+        </div>
+
+        <div class="hs-icons">
+            <div class="hs-icon-item">
+                <i class="fa fa-map-marker-alt"></i>
+                <span>Cửa hàng</span>
+            </div>
+            <div class="hs-icon-item">
+                <i class="fa fa-user"></i>
+                <span>Đăng nhập</span>
+            </div>
+            <div class="hs-icon-item hs-cart">
+                <i class="fa fa-shopping-cart"></i>
+                <span>Giỏ hàng</span>
+                <span class="hs-cart-count">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu trắng -->
+    <nav class="hs-nav-menu">
+        <ul>
+            <li>🔍 HÀNG MỚI <span class="hs-new">New</span></li>
+            <li>SẢN PHẨM <i class="fa fa-angle-down"></i></li>
+            <li>ÁO NAM <i class="fa fa-angle-down"></i></li>
+            <li>QUẦN NAM <i class="fa fa-angle-down"></i></li>
+            <li>PHỤ KIỆN <i class="fa fa-angle-down"></i></li>
+            <li class="hs-highlight">GIÁ MỚI</li>
+            <li>JEANS <i class="fa fa-angle-down"></i></li>
+            <li>TIN THỜI TRANG</li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Banner slider -->
+<div class="hs-banner-slider banner-slider">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <img src="https://file.hstatic.net/1000253775/file/new_banner_pc_copy_3be13f0b4b0d4ad19455f1eb05b7b22f.jpg" alt="Banner 1" />
+            </div>
+            <div class="swiper-slide">
+                <img src="https://file.hstatic.net/1000253775/file/kt_dn_dk.jpg" alt="Banner 2" />
+            </div>
+            <div class="swiper-slide">
+                <img src="https://file.hstatic.net/1000253775/file/banner_store_dk.jpg" alt="Banner 3" />
+            </div>
+        </div>
+
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<!-- Ưu đãi dành cho bạn -->
+<div class="voucher-section">
+    <h3>ƯU ĐÃI DÀNH CHO BẠN</h3>
+    <div class="voucher-list">
+        <div class="voucher-item">
+            <div class="voucher-left">HE10</div>
+            <div class="voucher-right">
+                <div class="voucher-title">GIẢM 10%</div>
+                <div class="voucher-desc">giảm 10% (tối đa 10K)</div>
+                <div class="voucher-code">Mã: <b>HE10</b></div>
+                <div class="voucher-exp">HSD: 31/03/2025</div>
+                <button class="voucher-btn">Sao chép mã</button>
+            </div>
+        </div>
+
+        <div class="voucher-item">
+            <div class="voucher-left">HE50</div>
+            <div class="voucher-right">
+                <div class="voucher-title">GIẢM 50K</div>
+                <div class="voucher-desc">đơn từ 699K (số lượng có hạn)</div>
+                <div class="voucher-code">Mã: <b>HE50</b></div>
+                <div class="voucher-exp">HSD: 31/03/2025</div>
+                <button class="voucher-btn">Sao chép mã</button>
+            </div>
+        </div>
+
+        <div class="voucher-item">
+            <div class="voucher-left">HE80</div>
+            <div class="voucher-right">
+                <div class="voucher-title">GIẢM 80K</div>
+                <div class="voucher-desc">đơn từ 999K (số lượng có hạn)</div>
+                <div class="voucher-code">Mã: <b>HE80</b></div>
+                <div class="voucher-exp">HSD: 31/03/2025</div>
+                <button class="voucher-btn">Sao chép mã</button>
+            </div>
+        </div>
+
+        <div class="voucher-item freeship">
+            <div class="freeship-content">
+                <div class="freeship-title">FREESHIP</div>
+                <div class="freeship-sub">ĐƠN HÀNG TỪ <b>399K</b></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Banner Hàng Mới -->
+<div class="banner">
+    <img src="https://file.hstatic.net/1000253775/file/yptvddzi.jpg" alt="Banner Hàng Mới Mỗi Ngày" />
+</div>
+
+<!-- Section sản phẩm mới -->
+<section class="container">
+    <div class="product-grid" id="product-list"></div>
+    <div class="see-all">
+        <a href="new.html">Xem tất cả »</a>
+    </div>
+</section>
+
+<!-- Flash Sale Section -->
+<section class="flash-sale-section">
+    <div class="flash-sale-header">
+        <h2>⚡ FLASH SALE</h2>
+        <div class="flash-timer">
+            <div><span id="hours">03</span><br>Giờ</div>
+            <div><span id="minutes">00</span><br>Phút</div>
+            <div><span id="seconds">00</span><br>Giây</div>
+        </div>
+    </div>
+
+    <div class="swiper flash-sale-swiper">
+        <div class="swiper-wrapper" id="flash-sale-products"></div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <div class="see-all"><a href="sale.html">Xem tất cả »</a></div>
+</section>
+
+<!-- Banner Mùa Hè -->
+<div class="banner">
+    <img src="https://file.hstatic.net/1000253775/file/z6380677082359_b0129104e7a13cb7b1bfbc38569724b8.jpg" alt="Banner Tủ Đồ Mùa Hè" />
+</div>
+
+<!-- Section Tủ Đồ Mùa Hè -->
+<section class="container">
+    <div class="grid" id="summer-product-list"></div>
+    <div class="see-all">
+        <a href="#">Xem tất cả »</a>
+    </div>
+</section>
+
+<!-- Banner Bán Chạy -->
+<div class="banner">
+    <img src="https://file.hstatic.net/1000253775/file/banchay_a01333a0db53411883d51490d22b7eab.jpg" alt="Banner Hàng Bán Chạy" />
+</div>
+
+<!-- Section Bán Chạy -->
+<section class="container">
+    <div class="grid" id="bestseller-list"></div>
+    <div class="see-all">
+        <a href="#">Xem tất cả »</a>
+    </div>
+</section>
+
+<!-- Danh mục sản phẩm -->
+<section class="hs-container">
+    <div class="hs-row">
+        <!-- DANH MỤC 1: ÁO THUN -->
+        <div class="hs-category-box">
+            <div class="hs-category-header">
+                <h2>ÁO THUN</h2>
+                <a href="#" class="hs-view-all">Xem tất cả</a>
+            </div>
+
+            <div class="swiper hs-swiper" id="hs-swiper-thun">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=1">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-rattle-snake__11__03551496e0ce4cdc9191c1a3555d5035_large.jpg" alt="Áo Thun Nam ICONDENIM Rattle Snake">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="1" data-product-name="Áo Thun Nam ICONDENIM Rattle Snake" data-product-price="329,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-rattle-snake__11__03551496e0ce4cdc9191c1a3555d5035_large.jpg">
+                                    <i class="fa fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=1" class="hs-product-link">
+                                <p class="hs-product-name">Áo Thun Nam ICONDENIM Rattle Snake</p>
+                                <p class="hs-product-price">329,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=2">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-monster__10__4a308b8750f344dabf7ac5cbae410426_large.jpg" alt="Áo Thun ICONDENIM Orgnls ICDN">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="2" data-product-name="Áo Thun ICONDENIM Orgnls ICDN" data-product-price="349,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-monster__10__4a308b8750f344dabf7ac5cbae410426_large.jpg">
+                                    <i class="fa fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=2" class="hs-product-link">
+                                <p class="hs-product-name">Áo Thun ICONDENIM Orgnls ICDN</p>
+                                <p class="hs-product-price">349,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=3">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-monster__10__4a308b8750f344dabf7ac5cbae410426_large.jpg" alt="Áo Thun Nam Patterned">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="3" data-product-name="Áo Thun Nam Patterned" data-product-price="329,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-thun-icondenim-monster__10__4a308b8750f344dabf7ac5cbae410426_large.jpg">
+                                    <i class="fa fa-cart-shopping"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=3" class="hs-product-link">
+                                <p class="hs-product-name">Áo Thun Nam Patterned</p>
+                                <p class="hs-product-price">329,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=4">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-icon-graphic-tee__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo ICON Graphic Tee">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="4" data-product-name="Áo ICON Graphic Tee" data-product-price="319,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-icon-graphic-tee__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=4" class="hs-product-link">
+                                <p class="hs-product-name">Áo ICON Graphic Tee</p>
+                                <p class="hs-product-price">319,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=5">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-icon-slimfit-tee__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo ICON Slimfit Tee">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="5" data-product-name="Áo ICON Slimfit Tee" data-product-price="299,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-icon-slimfit-tee__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=5" class="hs-product-link">
+                                <p class="hs-product-name">Áo ICON Slimfit Tee</p>
+                                <p class="hs-product-price">299,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+
+        <!-- DANH MỤC 2: ÁO POLO -->
+        <div class="hs-category-box">
+            <div class="hs-category-header">
+                <h2>ÁO POLO</h2>
+                <a href="#" class="hs-view-all">Xem tất cả</a>
+            </div>
+
+            <div class="swiper hs-swiper" id="hs-swiper-polo">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=6">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-polo-nam-procool-seam__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo Polo Nam Procool Seam">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="6" data-product-name="Áo Polo Nam Procool Seam" data-product-price="389,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-polo-nam-procool-seam__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=6" class="hs-product-link">
+                                <p class="hs-product-name">Áo Polo Nam Procool Seam</p>
+                                <p class="hs-product-price">389,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=7">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-polo-nam-icondenim__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo Polo Nam ICONDENIM">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="7" data-product-name="Áo Polo Nam ICONDENIM" data-product-price="379,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-polo-nam-icondenim__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=7" class="hs-product-link">
+                                <p class="hs-product-name">Áo Polo Nam ICONDENIM</p>
+                                <p class="hs-product-price">379,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=8">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-polo-logo-mark__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo Polo Logo Mark">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="8" data-product-name="Áo Polo Logo Mark" data-product-price="349,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-polo-logo-mark__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=8" class="hs-product-link">
+                                <p class="hs-product-name">Áo Polo Logo Mark</p>
+                                <p class="hs-product-price">349,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=9">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-polo-icon-basic__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo Polo ICON Basic">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="9" data-product-name="Áo Polo ICON Basic" data-product-price="329,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-polo-icon-basic__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=9" class="hs-product-link">
+                                <p class="hs-product-name">Áo Polo ICON Basic</p>
+                                <p class="hs-product-price">329,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="hs-product-card">
+                            <div class="hs-product-image">
+                                <a href="chitietsanpham.html?id=10">
+                                    <img src="https://product.hstatic.net/1000253775/product/ao-polo-icon-essential__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg" alt="Áo Polo ICON Essential">
+                                </a>
+                                <button class="hs-cart-btn" data-product-id="10" data-product-name="Áo Polo ICON Essential" data-product-price="319,000₫" data-product-img="https://product.hstatic.net/1000253775/product/ao-polo-icon-essential__1__e3e3e3e3e3e3e3e3e3e3e3e3e3e3e3e_large.jpg">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </div>
+                            <a href="chitietsanpham.html?id=10" class="hs-product-link">
+                                <p class="hs-product-name">Áo Polo ICON Essential</p>
+                                <p class="hs-product-price">319,000₫</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white pt-5 pb-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5 class="text-warning">ĐĂNG KÍ NHẬN TIN</h5>
+                <input type="email" placeholder="Email" class="form-control">
+                <button class="btn btn-warning mt-2">ĐĂNG KÝ</button>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-warning">GIỚI THIỆU</h5>
+                <p>ACV 360 - Thời trang cao cấp</p>
+                <p>Hotline: 0969.469.018</p>
+                <p>Email: ACV360@gmail.com</p>
+                <p>Giờ mở cửa: 08:30 - 22:00</p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-warning">CHÍNH SÁCH</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-white">Hướng dẫn đặt hàng</a></li>
+                    <li><a href="#" class="text-white">Chính sách đổi trả</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h5 class="text-warning">ĐỊA CHỈ CỬA HÀNG</h5>
+                <p>Hà Nội: Số 1 Trịnh Văn Bô, Nam Từ Liêm</p>
+                <p>TP. Hồ Chí Minh: 297/3 Tô Hiến Thành, Quận 10</p>
+                <a href="#" class="text-warning">Xem tất cả cửa hàng</a>
+            </div>
+            <div class="col-md-6">
+                <p>Phương thức thanh toán:</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" height="40">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/MasterCard_Logo.svg" alt="MasterCard" height="40">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Visa_2021.svg" alt="Visa" height="40">
+                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo" height="40">
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>&copy; ACV 360 - Thời trang cao cấp</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SwiperJS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<!-- Custom JS -->
+<script src="/js/index.js"></script>
+<script>
+    // ===== PRODUCT DATA =====
+    const newProducts = [
+        {
+            id: 1,
+            name: "Áo Sơ Mi Nam ICONDENIM Patterned Heat - Embossed",
+            price: "399,000đ",
+            img: "https://product.hstatic.net/1000253775/product/ao-so-mi-icondenim-patterned-heat-embossed__4__083ad7476a7b4a9dbc8c3ae171063777_1024x1024.jpg"
+        },
+        {
+            id: 2,
+            name: "Áo Polo Nam Procool ICONDENIM Seam Sealing",
+            price: "389,000đ",
+            img: "https://product.hstatic.net/1000253775/product/z5816305453622_a796581509ba47578f83b09fef4bbd7c_e1d3464940214462a9414aa563a24495_1024x1024.jpg"
+        },
+        {
+            id: 3,
+            name: "Vớ Lười Nam ICONDENIM Twinline",
+            price: "29,000đ",
+            img: "https://product.hstatic.net/1000253775/product/vo-no-show-icondenim-twinline_0ef5632375ae458ba8b77ac6734749a6_grande.jpg"
+        },
+        {
+            id: 4,
+            name: "Áo thun Nam ICONDENIM ft MARVEL ICON LOGO",
+            price: "379,000đ",
+            img: "https://product.hstatic.net/1000253775/product/ao-thun-icondenim-ft-marvel-icon-logo__4__2e5b37873ccd47f0b5668a724b63c6e3_1024x1024.jpg"
+        },
+        {
+            id: 5,
+            name: "Áo Polo ICONDENIM Shade Flow",
+            price: "349,000đ",
+            img: "https://product.hstatic.net/1000253775/product/160_ao_polo_210-11_8a4f95fe3bff4f85bf2efefc261f5578_grande.jpg"
+        }
+    ];
+
+    const flashSaleProducts = [
+        {
+            id: 6,
+            name: "Áo Thun Nam ICONDENIM Graffiti Stains",
+            price: "249,000đ",
+            oldPrice: "349,000đ",
+            discount: "29%",
+            sold: "Đang bán chạy",
+            progress: 80,
+            img: "https://product.hstatic.net/1000253775/product/160_ao_thun_461-8_4953c16d24a44b868039366b5e0c94a9_grande.jpg"
+        },
+        {
+            id: 7,
+            name: "Áo Sơ Mi Cuban ICONDENIM",
+            price: "249,000đ",
+            oldPrice: "349,000đ",
+            discount: "29%",
+            sold: "Đang bán chạy",
+            progress: 65,
+            img: "https://product.hstatic.net/1000253775/product/160_ao_somi_271-1_1eceee9e0fca4c32b4f5e49e338d78e9_1024x1024.jpg"
+        },
+        {
+            id: 8,
+            name: "Áo Thun Ombree Tie-Dye",
+            price: "199,000đ",
+            oldPrice: "319,000đ",
+            discount: "38%",
+            sold: "Sắp cháy hàng",
+            progress: 95,
+            img: "https://product.hstatic.net/1000253775/product/ao_thun_nam_icondenim_araneae_mat_truoc_e06fe5fe920c4370b2480d8c11ce34cf_1024x1024.jpg"
+        },
+        {
+            id: 9,
+            name: "Quần Short Fundamental",
+            price: "249,000đ",
+            oldPrice: "320,000đ",
+            discount: "22%",
+            sold: "Đã bán 188 sản phẩm",
+            progress: 70,
+            img: "https://product.hstatic.net/1000253775/product/quan_short_nam_kaki_icondenim_fundamental_chinh_dien_7b3e7aa288834b4fa918e57b553894f9_1024x1024.jpg"
+        },
+        {
+            id: 10,
+            name: "Áo Polo Pisa Tower",
+            price: "249,000đ",
+            oldPrice: "360,000đ",
+            discount: "29%",
+            sold: "Đã bán 188 sản phẩm",
+            progress: 55,
+            img: "https://product.hstatic.net/1000253775/product/ao_polo_nam_icondenim_pisa_tower_chinh_dien_07a18358b3374ae68cf337320127685a_grande.jpg"
+        },
+        {
+            id: 11,
+            name: "Áo Tank Top Summer",
+            price: "199,000đ",
+            oldPrice: "299,000đ",
+            discount: "33%",
+            sold: "Đang bán chạy",
+            progress: 88,
+            img: "https://product.hstatic.net/1000253775/product/160_quan_dai_3m-6_e89cbc68c57b43e6a87b652d3134bc2c_1024x1024.jpg"
+        }
+    ];
+
+    const summerProducts = [
+        {
+            id: 12,
+            name: "Áo Thun Nam Procool ICONDENIM Seam Sealing",
+            price: "319,000đ",
+            img: "https://product.hstatic.net/1000253775/product/z5816310391696_d9c5d17f2f40163af0995d2488023a23_42cd0d16f5f44448a517a9b7f3d9092b_large.jpg"
+        },
+        {
+            id: 13,
+            name: "Áo Polo Nam Procool ICONDENIM Seam Sealing",
+            price: "389,000đ",
+            img: "https://product.hstatic.net/1000253775/product/z5816305453622_a796581509ba47578f83b09fef4bbd7c_e1d3464940214462a9414aa563a24495_1024x1024.jpg"
+        },
+        {
+            id: 14,
+            name: "Áo Sơ Mi Nam Basic Linen Cuban ICONDENIM",
+            price: "320,000đ",
+            img: "https://product.hstatic.net/1000253775/product/160_somi_4m-14_62b412487de54880a3ae4dd24b2f084d_large.jpg"
+        },
+        {
+            id: 15,
+            name: "Áo Khoác Dù Nam ICONDENIM Pocketable",
+            price: "450,000đ",
+            img: "https://product.hstatic.net/1000253775/product/160_ao_khoac_123-14_d3868696c5e0431fbb2a3ab540cbe565_large.jpg"
+        },
+        {
+            id: 16,
+            name: "Quần Boxer Nam Procool ICONDENIM Bicolor Fabric",
+            price: "119,000đ",
+            img: "https://product.hstatic.net/1000253775/product/z5852735549150_5ed17fe61c5ea2a0889bc5642cbc0e9e_ac00adecf8b94b37a338b3d43c1ae207_large.jpg"
+        }
+    ];
+
+    const bestsellerProducts = [
+        {
+            id: 17,
+            name: "Quần Tây Nam ICONDENIM Straight Neutral Basic",
+            price: "419,000đ",
+            img: "https://product.hstatic.net/1000253775/product/taoanhdep_lam_net_anh_93898_fe363c423cf4481cae6e9e817094f3d3_large.jpeg",
+            badge: "Best Seller"
+        },
+        {
+            id: 18,
+            name: "Áo Sơ Mi Nam ICONDENIM Jacquard Jean",
+            price: "349,000đ",
+            img: "https://product.hstatic.net/1000253775/product/set-so-mi-va-quan-short-icondenim-jacquard-jean__7__ef1d12830b2c46d089cc259564ace612_1024x1024.jpg",
+            badge: "Best Seller"
+        },
+        {
+            id: 19,
+            name: "Quần Kaki Nam ICONDENIM DetailLine – Slim Straight",
+            price: "419,000đ",
+            img: "https://product.hstatic.net/1000253775/product/quan-khakis-icondenim-detailline-slim-straight__14__df22a153baf44a0eb89201e499ee8347_large.jpg",
+            badge: "Best Seller"
+        },
+        {
+            id: 20,
+            name: "Set Đồ Nam ICONDENIM ORGNLS French Bulldog",
+            price: "329,000đ ~ 678,000đ",
+            img: "https://product.hstatic.net/1000253775/product/set-do-icondenim-orgnls-french-bulldog__9__03fa07a8e04f40418161caef98694d34_1024x1024.jpg",
+            badge: "Best Seller"
+        },
+        {
+            id: 21,
+            name: "Quần Tây Nam ICONDENIM Metro Ease",
+            price: "399,000đ",
+            img: "https://product.hstatic.net/1000253775/product/quan-tay-icondenim-metro-ease__1__c7b0743ec94d4421bda7838bc27f4413_1024x1024.jpg",
+            badge: "Best Seller"
+        }
+    ];
+
+    // ===== RENDER FUNCTIONS =====
+    function renderProducts(products, containerId, type = 'normal') {
+        const container = document.getElementById(containerId);
+        container.innerHTML = products.map(p => `
+    <div class="card">
+      <div class="image-wrapper">
+        <a href="chitietsanpham.html?id=${p.id}">
+          <img src="${p.img}" alt="${p.name}">
+        </a>
+        ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
+        <button class="cart-icon" data-product-id="${p.id}" data-product-name="${p.name}" data-product-price="${p.price}" data-product-img="${p.img}">
+          <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" alt="Giỏ hàng">
+        </button>
+      </div>
+      <a href="chitietsanpham.html?id=${p.id}">
+        <h4>${p.name}</h4>
+        <div class="price">${p.price}</div>
+      </a>
+    </div>
+  `).join('');
+    }
+
+    function renderFlashSaleProducts() {
+        const container = document.getElementById("flash-sale-products");
+        container.innerHTML = flashSaleProducts.map(p => `
+    <div class="swiper-slide product-card" th:each="pd : ${newProducts}">
+    <img th:src="${pd.imageUrl}" alt="Sản phẩm" />
+    <h5 th:text="${pd.name}">Tên sản phẩm</h5>
+    <p th:text="${#numbers.formatDecimal(pd.price, 0, 'POINT', ',', '.')} + ' đ'">Giá</p>
+    </div>
+
+  `).join('');
+    }
+
+    // ===== COUNTDOWN TIMER =====
+    function startFlashCountdown(duration) {
+        let timer = duration;
+        const hoursEl = document.getElementById("hours");
+        const minutesEl = document.getElementById("minutes");
+        const secondsEl = document.getElementById("seconds");
+
+        const countdown = setInterval(() => {
+            const hours = String(Math.floor(timer / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((timer % 3600) / 60)).padStart(2, '0');
+            const seconds = String(timer % 60).padStart(2, '0');
+
+            hoursEl.textContent = hours;
+            minutesEl.textContent = minutes;
+            secondsEl.textContent = seconds;
+
+            if (--timer < 0) clearInterval(countdown);
+        }, 1000);
+    }
+
+    // ===== CART FUNCTIONS =====
+    function updateCartCount(count) {
+        document.querySelector('.hs-cart-count').textContent = count;
+    }
+
+    function addToCart(productId, productName, productPrice, productImg, size, quantity) {
+        // Lấy giỏ hàng từ localStorage hoặc tạo mới nếu chưa có
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+        const existingItem = cart.find(item => item.id === productId && item.size === size);
+
+        if (existingItem) {
+            // Nếu đã có thì tăng số lượng
+            existingItem.quantity += quantity;
+        } else {
+            // Nếu chưa có thì thêm mới
+            cart.push({
+                id: productId,
+                name: productName,
+                price: productPrice,
+                img: productImg,
+                size: size,
+                quantity: quantity
+            });
+        }
+
+        // Lưu giỏ hàng vào localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Cập nhật số lượng trên icon giỏ hàng
+        updateCartCount(cart.reduce((total, item) => total + item.quantity, 0));
+
+        // Hiển thị thông báo
+        alert(`Đã thêm ${quantity} ${productName} (Size: ${size}) vào giỏ hàng!`);
+    }
+
+    // ===== INITIALIZE WHEN DOM LOADED =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize banner slider
+        const bannerSwiper = new Swiper('.banner-slider .swiper', {
+            loop: true,
+            spaceBetween: 20,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.banner-slider .swiper-button-next',
+                prevEl: '.banner-slider .swiper-button-prev',
+            },
+        });
+
+        // Initialize Flash Sale Swiper
+        const flashSaleSwiper = new Swiper(".flash-sale-swiper", {
+            slidesPerView: 5,
+            spaceBetween: 20,
+            navigation: {
+                nextEl: ".flash-sale-swiper .swiper-button-next",
+                prevEl: ".flash-sale-swiper .swiper-button-prev",
+            },
+            breakpoints: {
+                0: { slidesPerView: 1.5 },
+                640: { slidesPerView: 2.5 },
+                768: { slidesPerView: 3.5 },
+                1024: { slidesPerView: 5 }
+            }
+        });
+
+        // Start countdown (3 hours)
+        startFlashCountdown(3 * 60 * 60);
+
+        // Render all products
+        renderProducts(newProducts, 'product-list');
+        renderFlashSaleProducts();
+        renderProducts(summerProducts, 'summer-product-list');
+        renderProducts(bestsellerProducts, 'bestseller-list');
+
+        // Add copy voucher functionality
+        document.querySelectorAll('.voucher-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const voucherCode = this.closest('.voucher-item').querySelector('.voucher-code b').textContent;
+                navigator.clipboard.writeText(voucherCode);
+                this.textContent = 'Đã sao chép!';
+                setTimeout(() => {
+                    this.textContent = 'Sao chép mã';
+                }, 2000);
+            });
+        });
+
+        // Initialize Swiper for Áo Thun
+        new Swiper('#hs-swiper-thun', {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            navigation: {
+                nextEl: '#hs-swiper-thun .swiper-button-next',
+                prevEl: '#hs-swiper-thun .swiper-button-prev',
+            },
+            pagination: {
+                el: '#hs-swiper-thun .swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                    spaceBetween: 10
+                },
+                480: {
+                    slidesPerView: 2,
+                    spaceBetween: 15
+                },
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 20
+                }
+            }
+        });
+
+        // Initialize Swiper for Áo Polo
+        new Swiper('#hs-swiper-polo', {
+            slidesPerView: 3,
+            spaceBetween: 20,
+            navigation: {
+                nextEl: '#hs-swiper-polo .swiper-button-next',
+                prevEl: '#hs-swiper-polo .swiper-button-prev',
+            },
+            pagination: {
+                el: '#hs-swiper-polo .swiper-pagination',
+                clickable: true,
+            },
+            breakpoints: {
+                320: {
+                    slidesPerView: 1,
+                    spaceBetween: 10
+                },
+                480: {
+                    slidesPerView: 2,
+                    spaceBetween: 15
+                },
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 20
+                }
+            }
+        });
+
+        // Handle add to cart button clicks
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.hs-cart-btn') || e.target.closest('.cart-icon')) {
+                e.preventDefault();
+                const btn = e.target.closest('.hs-cart-btn') || e.target.closest('.cart-icon');
+                const productId = btn.getAttribute('data-product-id');
+                const productName = btn.getAttribute('data-product-name');
+                const productPrice = btn.getAttribute('data-product-price');
+                const productImg = btn.getAttribute('data-product-img');
+
+                // Set modal content
+                document.getElementById('modalProductImage').src = productImg;
+                document.getElementById('modalProductName').textContent = productName;
+                document.getElementById('modalProductPrice').textContent = productPrice;
+
+                // Store product info in modal for later use
+                const modal = new bootstrap.Modal(document.getElementById('addToCartModal'));
+                modal._element.setAttribute('data-product-id', productId);
+                modal._element.setAttribute('data-product-name', productName);
+                modal._element.setAttribute('data-product-price', productPrice);
+                modal._element.setAttribute('data-product-img', productImg);
+
+                // Show modal
+                modal.show();
+            }
+        });
+
+        // Handle size selection
+        document.querySelectorAll('.size-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Handle quantity controls
+        document.querySelector('.quantity-btn.minus').addEventListener('click', function() {
+            const input = document.querySelector('.quantity-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        });
+
+        document.querySelector('.quantity-btn.plus').addEventListener('click', function() {
+            const input = document.querySelector('.quantity-input');
+            input.value = parseInt(input.value) + 1;
+        });
+
+        // Handle confirm add to cart
+        document.getElementById('confirmAddToCart').addEventListener('click', function() {
+            const modal = document.getElementById('addToCartModal');
+            const productId = modal.getAttribute('data-product-id');
+            const productName = modal.getAttribute('data-product-name');
+            const productPrice = modal.getAttribute('data-product-price');
+            const productImg = modal.getAttribute('data-product-img');
+            const size = document.querySelector('.size-option.active').textContent;
+            const quantity = parseInt(document.querySelector('.quantity-input').value);
+
+            addToCart(productId, productName, productPrice, productImg, size, quantity);
+
+            // Hide modal
+            bootstrap.Modal.getInstance(modal).hide();
+        });
+
+        // Initialize cart count
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartCount(cart.reduce((total, item) => total + item.quantity, 0));
+    });
+</script>
+</body>
+</html>

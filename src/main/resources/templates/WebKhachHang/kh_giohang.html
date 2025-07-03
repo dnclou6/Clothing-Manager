@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACV 360 - Giỏ hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f8f9fa; display: flex; flex-direction: column; min-height: 100vh; }
+        .navbar { background-color: #ff4d4f; padding: 10px; }
+        .navbar-brand { font-size: 24px; font-weight: bold; }
+        .main-content { flex: 1; padding-bottom: 20px; }
+        .cart-container { max-width: 900px; margin: auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+        .cart-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
+        .cart-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 5px; }
+        .cart-item-info { flex: 1; margin-left: 10px; }
+        .cart-item-actions { display: flex; align-items: center; }
+        .cart-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+        .footer { background: #333; color: white; padding: 20px 0; text-align: center; margin-top: auto; }
+        input.quantity-input { width: 50px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand text-white" href="#">🛍️ ACV 360</a>
+        <a href="#" class="btn btn-light ms-auto">🛒 Giỏ hàng</a>
+    </div>
+</nav>
+
+<!-- Header -->
+<div class="text-center py-3 bg-light">
+    <h2 class="fw-bold">🛒 Giỏ hàng của bạn</h2>
+</div>
+
+<!-- Giỏ hàng -->
+<div class="main-content">
+    <div class="cart-container">
+        <div id="cart-items">
+            <p class="text-center">Giỏ hàng của bạn đang trống.</p>
+        </div>
+        <div class="cart-actions">
+            <button class="btn btn-secondary" onclick="continueShopping()">⬅️ Tiếp tục mua sắm</button>
+            <button class="btn btn-primary" onclick="goToCheckout()">💳 Thanh toán</button>
+        </div>
+        <h4 class="text-end mt-3" id="total-price">Tổng tiền: 0 VND</h4>
+    </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>© 2025 ACV 360 - Mua sắm dễ dàng, thanh toán an toàn</p>
+    <p>Liên hệ: support@acv360.com | Hotline: 1900 6868</p>
+</div>
+
+<script>
+    function addToCart(name, price, size, color) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let existingProductIndex = cart.findIndex(item => item.name === name && item.size === size && item.color === color);
+
+        if (existingProductIndex !== -1) {
+            cart[existingProductIndex].quantity += 1;
+        } else {
+            cart.push({ name, price, size, color, quantity: 1 });
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadCart(); // Cập nhật giao diện ngay lập tức
+    }
+    function continueShopping() {
+        window.location.href = 'sanpham.html';
+    }
+
+    function goToCheckout() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            alert("Giỏ hàng trống, vui lòng thêm sản phẩm trước khi thanh toán!");
+            return;
+        }
+        window.location.href = 'thanhtoan.html';
+    }
+
+    function loadCart() {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let cartContainer = document.getElementById('cart-items');
+        let totalPriceElement = document.getElementById('total-price');
+        cartContainer.innerHTML = '';
+        let totalAmount = 0;
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = '<p class="text-center">Giỏ hàng của bạn đang trống.</p>';
+            totalPriceElement.innerText = "Tổng tiền: 0 VND";
+            return;
+        }
+
+        cart.forEach((item, index) => {
+            let itemTotal = item.price * item.quantity;
+            totalAmount += itemTotal;
+            let cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+            cartItem.innerHTML = `
+          <img src="https://via.placeholder.com/80" alt="${item.name}">
+          <div class="cart-item-info">
+            <strong>${item.name}</strong> <br>
+            Giá: ${item.price.toLocaleString()} VND <br>
+            Size: ${item.size} | Màu: ${item.color}
+          </div>
+          <div class="cart-item-actions">
+            <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${index}, this.value)">
+            <button class="btn btn-danger btn-sm ms-2" onclick="removeFromCart(${index})">Xóa</button>
+          </div>
+        `;
+            cartContainer.appendChild(cartItem);
+        });
+
+        totalPriceElement.innerText = `Tổng tiền: ${totalAmount.toLocaleString()} VND`;
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCart); // Load giỏ hàng ngay khi trang tải xong
+</script>
+</body>
+</html>

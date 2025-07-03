@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách Kiểu dáng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+    <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+</nav>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <!-- Content -->
+    <div class="content p-4">
+        <h2 class="text-center my-4">Danh sách Kiểu dáng</h2>
+
+        <!-- Thanh tìm kiếm -->
+        <div class="mb-3">
+            <form th:action="@{/acvstore/styles}" method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm theo tên kiểu dáng..." th:value="${param.search}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Tìm
+                </button>
+            </form>
+        </div>
+
+        <!-- Nút Thêm Kiểu dáng Mới -->
+        <div class="mb-3">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#styleModal" onclick="resetModal()">
+                <i class="fas fa-plus"></i> Thêm Kiểu dáng Mới
+            </button>
+        </div>
+
+        <!-- Bảng Kiểu dáng -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Tên kiểu dáng</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="style : ${styles}">
+                    <td th:text="${style.id}"></td>
+                    <td th:text="${style.name}"></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm btn-custom"
+                                data-bs-toggle="modal"
+                                data-bs-target="#styleModal"
+                                th:attr="data-id=${style.id},data-name=${style.name}"
+                                onclick="fillModal(this)">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+                        <a th:href="@{/acvstore/styles/delete/{id}(id=${style.id})}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Kiểu dáng -->
+<div class="modal fade" id="styleModal" tabindex="-1" aria-labelledby="styleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="styleModalLabel">Thêm Kiểu dáng Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/acvstore/styles/save}" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="styleId">
+                    <div class="mb-3">
+                        <label for="styleName" class="form-label">Tên kiểu dáng</label>
+                        <input type="text" name="name" id="styleName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Đóng
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+<script>
+    function resetModal() {
+        document.getElementById('styleModalLabel').textContent = 'Thêm Kiểu dáng Mới';
+        document.getElementById('styleId').value = '';
+        document.getElementById('styleName').value = '';
+    }
+
+    function fillModal(button) {
+        document.getElementById('styleModalLabel').textContent = 'Sửa Kiểu dáng';
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        document.getElementById('styleId').value = id;
+        document.getElementById('styleName').value = name;
+    }
+</script>
+</body>
+</html>

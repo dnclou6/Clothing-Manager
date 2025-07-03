@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<nav aria-label="breadcrumb" th:fragment="breadcrumb(currentPage)">
+    <div class="breadcrumb-container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/acvstore/thongke}">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${currentPage}"></li>
+        </ol>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sản Phẩm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #eef2f7;
+            color: #333;
+        }
+        .container {
+            max-width: 1300px;
+        }
+        .page-title {
+            color: #343a40;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 0.375rem;
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn {
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #333;
+        }
+        .btn-warning:hover {
+            background-color: #ffca2c;
+            border-color: #ffc720;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            border-color: #b02a37;
+        }
+        .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        .btn-success:hover {
+            background-color: #157347;
+            border-color: #146c43;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        .btn i {
+            margin-right: 0.4rem;
+        }
+        .table {
+            margin-bottom: 0;
+            border-color: #e9ecef;
+            vertical-align: middle;
+        }
+        .table thead {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 500;
+            border-bottom-width: 2px;
+        }
+        .table th, .table td {
+            padding: 1rem;
+        }
+        .table-hover > tbody > tr:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+        .input-group .btn {
+            z-index: 2;
+        }
+        .modal-header {
+            background-color: #0d6efd;
+            color: white;
+            border-bottom: none;
+        }
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        .modal-content {
+            border-radius: 0.75rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+        }
+        .action-buttons .btn {
+            margin-right: 5px;
+        }
+        .action-buttons .btn:last-child {
+            margin-right: 0;
+        }
+        .table-responsive {
+            border-radius: 0.75rem;
+        }
+        .product-image {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+            border-radius: 0.25rem;
+        }
+        .pagination {
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        .pagination-custom {
+            padding: 0.5rem 0;
+        }
+
+        .pagination-custom .page-item {
+            margin: 0 0.2rem;
+        }
+
+        .pagination-custom .page-link {
+            color: #0d6efd;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .pagination-custom .page-link:hover {
+            color: #0a58ca;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            text-decoration: none;
+        }
+
+        .pagination-custom .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .pagination-custom .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+
+        .pagination-custom .page-link:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            outline: none;
+        }
+
+        .pagination-custom {
+            padding: 0.5rem 0;
+        }
+
+        .pagination-custom .page-item {
+            margin: 0 0.2rem;
+        }
+
+        .pagination-custom .page-link {
+            color: #0d6efd;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .pagination-custom .page-link:hover {
+            color: #0a58ca;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            text-decoration: none;
+        }
+
+        .pagination-custom .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+            z-index: 1;
+        }
+
+        .pagination-custom .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+
+        .pagination-custom .page-link:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+    <div class="content">
+        <h2 class="mb-4 text-center page-title">QUẢN LÝ SẢN PHẨM</h2>
+        <div th:fragment="content">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/acvstore/products}" method="get">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-4">
+                                <label for="searchNameInput" class="form-label">Tìm kiếm</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                                    <input type="text" class="form-control border-start-0" id="searchNameInput" name="searchName" th:value="${searchName}" placeholder="Nhập tên sản phẩm...">
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-lg-4">
+                                <label for="categoryFilter" class="form-label">Lọc theo danh mục</label>
+                                <select class="form-select" id="categoryFilter" name="categoryId" onchange="this.form.submit()">
+                                    <option value="">-- Tất cả danh mục --</option>
+                                    <option th:each="cat : ${categories}"
+                                            th:value="${cat.id}"
+                                            th:text="${cat.name}"
+                                            th:selected="${cat.id == selectedCategoryId}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-lg-4 d-flex align-items-end">
+                                <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                    <i class="fas fa-plus"></i> Thêm sản phẩm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-list me-2"></i> Danh sách sản phẩm
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="productTable">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ảnh</th>
+                            <th>Tên</th>
+                            <th>Mô tả</th>
+                            <th>Danh mục</th>
+                            <th>Ngày tạo</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${productList == null or productList.isEmpty()}">
+                            <td colspan="7" class="text-center text-muted py-5">Không tìm thấy sản phẩm nào.</td>
+                        </tr>
+                        <tr th:each="p, iter : ${productList}" th:data-id="${p.id}">
+                            <td th:text="${iter.count + (currentPage * 10)}"></td>
+                            <td>
+                                <img th:if="${p.imageUrl != null and p.imageUrl != ''}" th:src="${p.imageUrl}" class="product-image" alt="Product Image">
+                                <span th:if="${p.imageUrl == null or p.imageUrl == ''}">N/A</span>
+                            </td>
+                            <td th:text="${p.name}"></td>
+                            <td th:text="${p.description}" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:title="${p.description}"></td>
+                            <td th:text="${p.category != null ? p.category.name : 'N/A'}"></td>
+                            <td th:text="${p.createdAt != null ? #dates.format(p.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+                            <td class="text-center action-buttons">
+                                <button class="btn btn-warning btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editProductModal"
+                                        th:data-product="${p.id}" title="Sửa">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a th:href="@{'/acvstore/product-details?productId=' + ${p.id}}" class="btn btn-success btn-sm" title="Thêm chi tiết">
+                                    <i class="fas fa-plus-circle"></i>
+                                </a>
+                                <a th:href="@{/acvstore/products/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')" title="Xóa">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center pagination-custom">
+                        <li class="page-item" th:class="${currentPage == 0 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/acvstore/products(page=${currentPage - 1}, searchName=${searchName}, categoryId=${selectedCategoryId})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo; Trước</span>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="p : ${#numbers.sequence(0, totalPages - 1)}"
+                            th:class="${p == currentPage ? 'active' : ''}">
+                            <a class="page-link" th:href="@{/acvstore/products(page=${p}, searchName=${searchName}, categoryId=${selectedCategoryId})}"
+                               th:text="${p + 1}">1</a>
+                        </li>
+                        <li class="page-item" th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">
+                            <a class="page-link" th:href="@{/acvstore/products(page=${currentPage + 1}, searchName=${searchName}, categoryId=${selectedCategoryId})}" aria-label="Next">
+                                <span aria-hidden="true">Sau &raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- Modal Thêm Sản Phẩm -->
+            <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addProductModalLabel"><i class="fas fa-plus-circle me-2"></i> Thêm Sản Phẩm Mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="addProductForm" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="addName" class="form-label">Tên sản phẩm</label>
+                                    <input type="text" class="form-control" id="addName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addDescription" class="form-label">Mô tả</label>
+                                    <textarea class="form-control" id="addDescription" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addCategory" class="form-label">Danh mục</label>
+                                    <select class="form-select" id="addCategory" name="category.id">
+                                        <option value="">-- Chọn danh mục --</option>
+                                        <option th:each="cat : ${categories}"
+                                                th:value="${cat.id}"
+                                                th:text="${cat.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="addImageFile" class="form-label">Ảnh sản phẩm</label>
+                                    <input type="file" class="form-control" id="addImageFile" name="imageFile" accept="image/*">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times"></i> Đóng
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Thêm sản phẩm
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Sửa Sản Phẩm -->
+            <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProductModalLabel"><i class="fas fa-edit me-2"></i> Sửa Thông Tin Sản Phẩm</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="editProductForm" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <input type="hidden" name="id">
+                                <div class="mb-3">
+                                    <label for="editName" class="form-label">Tên sản phẩm</label>
+                                    <input type="text" class="form-control" id="editName" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editDescription" class="form-label">Mô tả</label>
+                                    <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editCategory" class="form-label">Danh mục</label>
+                                    <select class="form-select" id="editCategory" name="category.id">
+                                        <option value="">-- Chọn danh mục --</option>
+                                        <option th:each="cat : ${categories}"
+                                                th:value="${cat.id}"
+                                                th:text="${cat.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editImageFile" class="form-label">Ảnh sản phẩm</label>
+                                    <input type="file" class="form-control" id="editImageFile" name="imageFile" accept="image/*">
+                                    <div class="mt-2" id="imagePreviewContainer">
+                                        <img class="product-image" alt="Current Image" id="imagePreview">
+                                        <small class="d-block mt-1">Ảnh hiện tại</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times"></i> Đóng
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Lưu thay đổi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editProductModal = document.getElementById('editProductModal');
+        const editProductForm = document.getElementById('editProductForm');
+        const addProductModal = document.getElementById('addProductModal');
+        const addProductForm = document.getElementById('addProductForm');
+
+        // Xử lý khi mở modal để chỉnh sửa
+        if (editProductModal) {
+            editProductModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const productId = button.getAttribute('data-product');
+                const modalForm = editProductModal.querySelector('#editProductForm');
+                const modalTitle = editProductModal.querySelector('.modal-title');
+                const productIdInput = modalForm.querySelector('input[name="id"]');
+                const nameInput = modalForm.querySelector('input[name="name"]');
+                const descriptionInput = modalForm.querySelector('textarea[name="description"]');
+                const categorySelect = modalForm.querySelector('select[name="category.id"]');
+                const imagePreview = modalForm.querySelector('#imagePreview');
+
+                modalTitle.textContent = 'Sửa Thông Tin Sản Phẩm (ID: ' + productId + ')';
+                productIdInput.value = productId;
+
+                fetch(`/acvstore/products/get/${productId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        nameInput.value = data.name || '';
+                        descriptionInput.value = data.description || '';
+                        categorySelect.value = data.category ? data.category.id : '';
+                        if (imagePreview) {
+                            if (data.imageUrl) {
+                                imagePreview.src = data.imageUrl.split('?')[0];
+                                imagePreview.style.display = 'block';
+                            } else {
+                                imagePreview.style.display = 'none';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product data:', error);
+                        alert('Không thể tải dữ liệu sản phẩm. Vui lòng thử lại.');
+                        nameInput.value = '';
+                        descriptionInput.value = '';
+                        categorySelect.value = '';
+                        if (imagePreview) {
+                            imagePreview.style.display = 'none';
+                        }
+                    });
+            });
+        }
+
+        // Xử lý submit form sửa sản phẩm bằng AJAX
+        if (editProductForm) {
+            editProductForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(editProductForm);
+                fetch('/acvstore/products/save', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const modal = bootstrap.Modal.getInstance(editProductModal);
+                            modal.hide();
+                            const product = data.product;
+                            let row = document.querySelector(`#productTable tbody tr[data-id="${product.id}"]`);
+                            if (row) {
+                                row.cells[0].textContent = row.rowIndex + (parseInt('[[${currentPage}]]') * 10);
+                                row.cells[1].innerHTML = product.imageUrl
+                                    ? `<img src="${product.imageUrl}" class="product-image" alt="Product Image" onerror="this.onerror=null;this.src='${product.imageUrl.split('?')[0]}?v=${new Date().getTime()}';">`
+                                    : 'N/A';
+                                row.cells[2].textContent = product.name || '';
+                                row.cells[3].textContent = product.description || '';
+                                row.cells[3].title = product.description || '';
+                                row.cells[4].textContent = product.category && product.category.name ? product.category.name : 'N/A';
+                                row.cells[5].textContent = product.createdAt
+                                    ? new Date(product.createdAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                                    : 'N/A';
+                            }
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error saving product:', error);
+                        alert('Lỗi khi lưu sản phẩm. Vui lòng thử lại.');
+                    });
+            });
+        }
+
+        // Xử lý submit form thêm sản phẩm bằng AJAX
+        if (addProductForm) {
+            addProductForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(addProductForm);
+
+                // Lấy giá trị category.id từ combobox
+                const categorySelect = document.getElementById('addCategory');
+                if (categorySelect && categorySelect.value) {
+                    formData.append('category.id', categorySelect.value);
+                }
+
+                fetch('/acvstore/products/quick-add-product', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const modal = bootstrap.Modal.getInstance(addProductModal);
+                            modal.hide();
+                            const product = data.product;
+                            const tbody = document.querySelector('#productTable tbody');
+                            const newRow = document.createElement('tr');
+                            newRow.setAttribute('data-id', product.id);
+                            newRow.innerHTML = `
+                        <td>1</td>
+                        <td>${product.imageUrl ? `<img src="${product.imageUrl}" class="product-image" alt="Product Image">` : 'N/A'}</td>
+                        <td>${product.name || ''}</td>
+                        <td style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${product.description || ''}">${product.description || ''}</td>
+                        <td>${product.category && product.category.name ? product.category.name : 'N/A'}</td>
+                        <td>${product.createdAt ? new Date(product.createdAt).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A'}</td>
+                        <td class="text-center action-buttons">
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editProductModal" data-product="${product.id}" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="/acvstore/product-details?productId=${product.id}" class="btn btn-success btn-sm" title="Thêm chi tiết">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                            <a href="/acvstore/products/delete/${product.id}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')" title="Xóa">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    `;
+                            // Chèn vào đầu bảng
+                            if (tbody.firstChild) {
+                                tbody.insertBefore(newRow, tbody.firstChild);
+                            } else {
+                                tbody.appendChild(newRow);
+                            }
+                            // Cập nhật lại số thứ tự của các dòng còn lại
+                            const rows = tbody.querySelectorAll('tr');
+                            rows.forEach((row, index) => {
+                                row.cells[0].textContent = index + 1;
+                            });
+                            addProductForm.reset();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding product:', error);
+                        alert('Lỗi khi thêm sản phẩm. Vui lòng thử lại.');
+                    });
+            });
+        }
+    });
+</script>
+</body>
+</html>

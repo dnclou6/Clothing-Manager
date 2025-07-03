@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết hóa đơn - ACV Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin-top: 70px;
+        }
+        .container-custom {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: #0d6efd !important;
+            font-size: 1.6rem;
+        }
+        .navbar {
+            padding: 12px 25px;
+        }
+        .header-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-section h2 {
+            font-size: 2.2rem;
+            color: #212529;
+            font-weight: 600;
+        }
+        .header-section .subtitle {
+            font-size: 1.1rem;
+            color: #495057;
+        }
+        .invoice-section {
+            background: #ffffff;
+            padding: 25px; /* Increased padding */
+            border-radius: 10px; /* Softer radius */
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1); /* Enhanced shadow */
+            margin-bottom: 25px;
+        }
+        .invoice-tabs { /* Styles for Tabs */
+            display: flex;
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 25px;
+        }
+        .invoice-tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 10px;
+            cursor: pointer;
+            color: #495057;
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+        .invoice-tab:hover {
+            background: #ced4da;
+            color: #0056b3;
+        }
+        .invoice-tab.active {
+            background: #ffffff;
+            color: #007bff;
+            border-top: 3px solid #007bff;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #ffffff; /* Blend with content */
+            position: relative;
+            top: 1px;
+            font-weight: 600;
+        }
+        .invoice-content { /* Content area for tabs */
+            padding: 25px;
+            background: #fdfdff;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+        }
+        .tab-pane { /* Styles for individual tab content */
+            display: none; /* Hidden by default */
+        }
+        .tab-pane.active {
+            display: block; /* Shown when active */
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e0e0e0;
+            font-size: 0.95rem;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-row > span:first-child {
+            color: #555;
+            font-weight: 500;
+            flex-basis: 40%;
+            padding-right: 10px;
+        }
+        .detail-row > span:last-child {
+            color: #222;
+            font-weight: 400;
+            text-align: right;
+            flex-basis: 60%;
+        }
+        .status-badge {
+            padding: 0.2em 0.5em; /* Reduced padding to make the badge smaller */
+            font-size: 0.7em; /* Reduced font size for better proportion */
+            font-weight: 600;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem; /* Slightly smaller border-radius */
+        }
+        .status-cho-xac-nhan { background-color: #ffc107; color: #000; }
+        .status-dang-xu-ly { background-color: #17a2b8; }
+        .status-da-giao-hang { background-color: #fd7e14; }
+        .status-hoan-thanh {
+            background-color: #28a745; /* Keep the green color */
+            color: #fff; /* Ensure text remains white */
+        }
+        .status-da-huy { background-color: #dc3545; }
+        .payment-paid { background-color: #28a745; }
+        .payment-unpaid { background-color: #dc3545; }
+
+        .table th, .table td {
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        .table thead {
+            background: #007bff;
+            color: #ffffff;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .action-buttons {
+            text-align: center;
+            margin: 25px 0;
+        }
+        .action-buttons .btn {
+            margin: 0 8px;
+            padding: 10px 22px;
+            font-size: 0.95rem;
+            border-radius: 6px;
+        }
+        .footer {
+            background: #343a40;
+            color: #f8f9fa;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .footer p {
+            margin-bottom: 0.5rem;
+        }
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading-spinner .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        /* Print Styles - Optimized for Single Page using .print-only section */
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm 7mm; /* Slightly adjusted margins for A4 */
+            }
+            body { background: #ffffff !important; padding: 0 !important; margin: 0 !important; font-family: 'Times New Roman', Times, serif; font-size: 10pt !important; line-height: 1.25 !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+            /* Hide everything not in .print-only or explicitly needed for print structure */
+            .navbar, .action-buttons, .footer:not(.print-only .footer-print), .toast-container,
+            #confirmModal, #cancelModal, .loading-spinner, .header-section .subtitle,
+            .invoice-tabs, .invoice-section .invoice-content > .tab-pane:not(.print-only-content) /* Hide on-screen tab panes */
+            {
+                display: none !important;
+            }
+
+            .container-custom { max-width: 100% !important; width: 100% !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important;}
+            .invoice-section { /* This still wraps the .print-only div */
+                box-shadow: none !important; padding: 0 !important; border: none !important; /* Or a thin border if preferred: 1px solid #999 !important; */
+                border-radius: 0 !important; margin-bottom: 5px !important;
+            }
+
+            .print-only { display: block !important; /* Ensure .print-only is visible */ }
+            .print-only .header { text-align: center; margin-bottom: 8px !important; border-bottom: 1.5px solid #000 !important; padding-bottom: 6px !important; }
+            .print-only .header img { max-height: 55px !important; margin-bottom: 4px !important; }
+            .print-only .header h1 { font-size: 16pt !important; margin: 0 0 3px 0 !important; }
+            .print-only .header p { font-size: 9pt !important; margin: 1px 0 !important; }
+            .print-only .invoice-title { font-size: 13pt !important; margin-top: 6px !important; font-weight: bold; }
+
+            .print-only .details, .print-only .payment-info { margin-bottom: 8px !important; padding: 0 1mm !important; }
+            .print-only .details p, .print-only .payment-info p { font-size: 9.5pt !important; margin: 2px 0 !important; }
+            .print-only .details p strong, .print-only .payment-info p strong { min-width: 110px !important; display: inline-block;}
+
+            .print-only .table { width: 100% !important; border-collapse: collapse !important; margin: 0 auto 8px auto !important; }
+            .print-only .table th, .print-only .table td { border: 1px solid #444 !important; padding: 3px 5px !important; font-size: 9pt !important; text-align: left !important; word-break: break-word; }
+            .print-only .table th { background: #e9ecef !important; font-weight: bold !important; color: #000 !important; }
+            .print-only .table tfoot td { font-weight: bold !important;}
+            .print-only .table .text-center { text-align: center !important; }
+            .print-only .table .text-end { text-align: right !important; }
+
+
+            .print-only .footer-print { display: block !important; text-align: center; font-size: 8.5pt !important; margin-top: 10px !important; border-top: 0.5px solid #000 !important; padding-top: 5px !important; }
+            .print-only .footer-print p { margin: 1px 0 !important; }
+            .print-only .footer-print .signature { margin-top: 15px !important; display: flex !important; justify-content: space-around !important; padding: 0 5px !important; }
+            .print-only .footer-print .signature p { margin-bottom: 20px !important; }
+
+            /* Attempt to keep sections together, but prioritize fitting on one page */
+            .print-only .header, .print-only .details, .print-only .table, .print-only .payment-info, .print-only .footer-print {
+                page-break-inside: avoid !important;
+            }
+            h1, h2, h3, h4, h5, h6 { page-break-after: avoid !important; }
+            table { page-break-inside: auto !important; }
+            tr { page-break-inside: avoid !important; page-break-after: auto !important; }
+            thead { display: table-header-group !important; }
+            tfoot { display: table-footer-group !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-spinner" id="loadingSpinner">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Đang tải...</span>
+    </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/acvstore/admin/dashboard">
+            <i class="fas fa-store-alt me-2"></i>ACV Admin
+        </a>
+    </div>
+</nav>
+
+<div class="container-custom">
+    <div class="header-section">
+        <h2><i class="fas fa-receipt me-2"></i>Chi tiết hóa đơn</h2>
+        <p class="subtitle">Mã hóa đơn: <span id="header-invoice-code" class="fw-bold">---</span> | Trạng thái: <span id="header-current-status" class="status-badge">---</span></p>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-primary" id="confirm-btn" title="Xác nhận trạng thái hóa đơn" style="display: none;"><i class="fas fa-check-circle me-1"></i>Xác nhận</button>
+        <button class="btn btn-danger" id="cancel-btn" title="Hủy hóa đơn" style="display: none;"><i class="fas fa-times-circle me-1"></i>Hủy HĐ</button>
+        <button class="btn btn-info" onclick="prepareAndPrint()" title="In hóa đơn"><i class="fas fa-print me-1"></i>In hóa đơn</button>
+        <a href="/acvstore/hoadon" class="btn btn-secondary" title="Quay lại danh sách hóa đơn"><i class="fas fa-arrow-left me-1"></i>Quay lại</a>
+    </div>
+
+    <div class="invoice-section">
+        <div class="invoice-tabs">
+            <div class="invoice-tab active" data-tab="info"><i class="fas fa-info-circle me-2"></i>Thông tin chung</div>
+            <div class="invoice-tab" data-tab="products"><i class="fas fa-boxes-stacked me-2"></i>Chi tiết sản phẩm</div>
+            <div class="invoice-tab" data-tab="payment"><i class="fas fa-credit-card me-2"></i>Thông tin thanh toán</div>
+        </div>
+
+        <div class="invoice-content">
+            <div class="tab-pane active" id="info">
+                <div class="detail-row">
+                    <span>Mã hóa đơn:</span>
+                    <span id="invoice-code" class="fw-bold">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Khách hàng:</span>
+                    <span id="customer-name">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Số điện thoại:</span>
+                    <span id="customer-phone">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Địa chỉ giao hàng:</span>
+                    <span id="customer-address">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Ngày tạo:</span>
+                    <span id="created-date">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Hình thức giao hàng:</span>
+                    <span id="delivery-method">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Trạng thái hóa đơn:</span>
+                    <span id="current-status" class="status-badge">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Ghi chú đơn hàng:</span>
+                    <span id="invoice-note" style="white-space: pre-wrap;">---</span>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="products">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Sản phẩm</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-end">Đơn giá</th>
+                        <th class="text-end">Thành tiền</th>
+                    </tr>
+                    </thead>
+                    <tbody id="product-list">
+                    <tr><td colspan="5" class="text-center p-4">Chưa có dữ liệu sản phẩm.</td></tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end fw-bold">Tổng tiền hàng:</td>
+                        <td id="product-subtotal" class="text-end fw-bold">---</td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="tab-pane" id="payment">
+                <div class="detail-row">
+                    <span>Tổng tiền hàng:</span>
+                    <span id="subtotal-payment">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Phí vận chuyển:</span>
+                    <span id="shipping-fee">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Giảm giá (Voucher):</span>
+                    <span id="discount-amount">---</span>
+                </div>
+                <div class="detail-row">
+                    <span class="fw-bold fs-5">Tổng cộng thanh toán:</span>
+                    <span id="total-amount" class="fw-bold fs-5 text-primary">---</span>
+                </div>
+                <hr class="my-3">
+                <div class="detail-row">
+                    <span>Phương thức thanh toán:</span>
+                    <span id="payment-method" class="fw-semibold">---</span>
+                </div>
+                <div class="detail-row">
+                    <span>Trạng thái thanh toán:</span>
+                    <span id="payment-status" class="status-badge">---</span>
+                </div>
+                <div class="mt-3 text-end" id="mark-paid-container">
+                    <button class="btn btn-success btn-sm" id="mark-paid-btn" title="Đánh dấu hóa đơn đã được thanh toán"><i class="fas fa-check-square me-1"></i>Đánh dấu đã thanh toán</button>
+                </div>
+            </div>
+        </div> <div class="print-only" style="display: none;">
+        <div class="header">
+            <img src="/acvstore/assets/images/logo_acv.png" alt="ACV Store Logo" > <h1>ACV Store</h1>
+            <p>Địa chỉ: Số 1 Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</p> <p>Hotline: 0123 456 789 | Website: www.acvstore.com</p> <p class="invoice-title">HÓA ĐƠN BÁN HÀNG</p>
+        </div>
+        <div class="details">
+            <p><strong>Mã hóa đơn:</strong> <span id="print-invoice-code"></span></p>
+            <p><strong>Khách hàng:</strong> <span id="print-customer-name"></span></p>
+            <p><strong>Số điện thoại:</strong> <span id="print-customer-phone"></span></p>
+            <p><strong>Địa chỉ:</strong> <span id="print-customer-address"></span></p>
+            <p><strong>Ngày tạo:</strong> <span id="print-created-date"></span></p>
+            <p><strong>Trạng thái HĐ:</strong> <span id="print-current-status"></span></p>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Sản phẩm</th>
+                <th class="text-center">SL</th>
+                <th class="text-end">Đơn giá</th>
+                <th class="text-end">Thành tiền</th>
+            </tr>
+            </thead>
+            <tbody id="print-product-list"></tbody>
+            <tfoot id="print-product-summary">
+            <tr>
+                <td colspan="4" class="text-end fw-bold">Tổng tiền hàng:</td>
+                <td class="text-end fw-bold" id="print-subtotal"></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-end">Phí vận chuyển:</td>
+                <td class="text-end" id="print-shipping-fee"></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-end">Giảm giá:</td>
+                <td class="text-end" id="print-discount-amount"></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="text-end fw-bolder" style="font-size: 10.5pt !important;">TỔNG CỘNG:</td>
+                <td class="text-end fw-bolder" style="font-size: 10.5pt !important;" id="print-total-amount"></td>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="payment-info">
+            <p><strong>Phương thức thanh toán:</strong> <span id="print-payment-method"></span></p>
+            <p><strong>Trạng thái thanh toán:</strong> <span id="print-payment-status"></span></p>
+            <p><strong>Ghi chú:</strong> <span id="print-invoice-note" style="white-space: pre-wrap;"></span></p>
+        </div>
+        <div class="footer-print">
+            <p>Cảm ơn quý khách đã mua sắm tại ACV Store!</p>
+            <p>Vui lòng kiểm tra hàng kỹ trước khi nhận.</p>
+            <p>Ngày in: <span id="print-date"></span></p>
+            <div class="signature">
+                <p>Khách hàng<br><small>(Ký, ghi rõ họ tên)</small></p>
+                <p>Người bán hàng<br><small>(Ký, ghi rõ họ tên)</small></p>
+            </div>
+        </div>
+    </div> </div> <footer class="footer">
+    <div class="container">
+        <p class="mb-1">Thông tin đơn hàng đang xem: <strong id="footer-invoice-code">---</strong></p>
+        <p class="mb-0">&copy; <span id="current-year"></span> ACV Store - Quản lý bán hàng | Ngày truy cập: <span id="footer-date"></span></p>
+    </div>
+</footer>
+</div> <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="confirmModalLabel"><i class="fas fa-question-circle me-2"></i>Xác nhận hóa đơn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn <strong id="confirm-action-text">XÁC NHẬN</strong> hóa đơn này không? Hành động này sẽ cập nhật trạng thái của hóa đơn.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Hủy bỏ</button>
+                <button type="button" class="btn btn-primary" id="execute-confirm-btn"><i class="fas fa-check me-1"></i>Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancelModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Hủy hóa đơn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn <strong class="text-danger">HỦY</strong> hóa đơn này không? Hành động này không thể hoàn tác nếu hóa đơn chưa được xử lý.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-1"></i>Không hủy</button>
+                <button type="button" class="btn btn-danger" id="execute-cancel-btn"><i class="fas fa-trash-alt me-1"></i>Xác nhận hủy</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+    <div id="actionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+        <div class="toast-header">
+            <i class="fas fa-bell me-2"></i>
+            <strong class="me-auto" id="toast-title">Thông báo</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toast-body">
+            Nội dung thông báo.
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const invoiceId = /*[[${invoiceId}]]*/ 'HDTEST001';
+    const API_BASE_URL = '/acvstore/api/invoice';
+
+    // UI Elements
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const actionToastEl = document.getElementById('actionToast');
+    const bsToast = new bootstrap.Toast(actionToastEl);
+
+    const confirmBtn = document.getElementById('confirm-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const markPaidBtn = document.getElementById('mark-paid-btn');
+    const markPaidContainer = document.getElementById('mark-paid-container');
+
+    const confirmModalEl = document.getElementById('confirmModal');
+    const cancelModalEl = document.getElementById('cancelModal'); // Get cancel modal instance
+    const confirmActionTextEl = document.getElementById('confirm-action-text');
+    const executeConfirmBtn = document.getElementById('execute-confirm-btn');
+    const executeCancelBtn = document.getElementById('execute-cancel-btn');
+
+
+    // --- Helper Functions (Không thay đổi nhiều) ---
+    function showLoading(show = true) {
+        loadingSpinner.style.display = show ? 'flex' : 'none';
+    }
+
+    function showToast(message, title = 'Thông báo', type = 'success') {
+        const toastTitleEl = document.getElementById('toast-title');
+        const toastBodyEl = document.getElementById('toast-body');
+
+        toastTitleEl.textContent = title;
+        toastBodyEl.textContent = message;
+
+        actionToastEl.classList.remove('text-bg-success', 'text-bg-danger', 'text-bg-warning', 'text-bg-info');
+        let iconClass = 'fa-bell';
+        switch (type) {
+            case 'success': actionToastEl.classList.add('text-bg-success'); iconClass = 'fa-check-circle'; break;
+            case 'danger': actionToastEl.classList.add('text-bg-danger'); iconClass = 'fa-exclamation-triangle'; break;
+            case 'warning': actionToastEl.classList.add('text-bg-warning'); iconClass = 'fa-exclamation-circle'; break;
+            default: actionToastEl.classList.add('text-bg-info'); break;
+        }
+        toastTitleEl.previousElementSibling.className = `fas ${iconClass} me-2`;
+        bsToast.show();
+    }
+
+    const currencyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+    function setText(elementId, text, defaultValue = '---') {
+        const element = document.getElementById(elementId);
+        if (element) element.textContent = text || defaultValue;
+    }
+
+    function setHtml(elementId, htmlContent, fallbackContainerId = null) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.innerHTML = htmlContent;
+        } else if (fallbackContainerId) {
+            const fallbackElement = document.getElementById(fallbackContainerId);
+            if (fallbackElement) fallbackElement.innerHTML = `<div class="alert alert-warning">Không tìm thấy phần tử DOM: ${elementId}</div>`;
+        }
+    }
+
+    function updateStatusUI(elementId, statusText, baseClassPrefix = 'status-') {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = statusText;
+            const classesToRemove = Array.from(element.classList).filter(cls => cls.startsWith(baseClassPrefix) || cls.startsWith('payment-'));
+            element.classList.remove(...classesToRemove, 'status-badge');
+
+            if (statusText && statusText !== '---') {
+                element.classList.add('status-badge');
+                const statusClass = (baseClassPrefix + statusText.toLowerCase().replace(/\s+/g, '-').replace(/đ/g, 'd'))
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                element.classList.add(statusClass);
+            }
+        }
+    }
+
+    // --- Tab Logic ---
+    document.querySelectorAll('.invoice-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and panes
+            document.querySelectorAll('.invoice-tab.active').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-pane.active').forEach(pane => pane.classList.remove('active'));
+
+            // Add active class to the clicked tab and corresponding pane
+            tab.classList.add('active');
+            const targetPaneId = tab.dataset.tab;
+            const targetPane = document.getElementById(targetPaneId);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            } else {
+                console.error('Không tìm thấy tab-pane với id:', targetPaneId);
+            }
+        });
+    });
+
+
+    // --- API Call Functions (Không thay đổi) ---
+    async function fetchData(url, options = {}) {
+        showLoading();
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                let errorMsg = `Lỗi HTTP: ${response.status}`;
+                try { const errData = await response.json(); errorMsg = errData.message || errData.error || errorMsg; } catch (e) { /* Ignore */ }
+                throw new Error(errorMsg);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Fetch error:', error);
+            showToast(error.message || 'Có lỗi xảy ra khi kết nối máy chủ.', 'Lỗi Mạng', 'danger');
+            throw error;
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // --- Data Population (Không thay đổi nhiều) ---
+    function populateInvoiceData(invoice) {
+        // Header
+        setText('header-invoice-code', invoice.code);
+        updateStatusUI('header-current-status', invoice.status, 'status-');
+
+        // Tab: Thông tin chung
+        setText('invoice-code', invoice.code);
+        setText('customer-name', invoice.customer_name);
+        setText('customer-phone', invoice.customer_phone || 'Chưa có');
+        setText('customer-address', invoice.customer_address || 'Chưa có');
+        setText('created-date', invoice.created_date ? new Date(invoice.created_date).toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '---');
+        setText('delivery-method', invoice.delivery_method);
+        setText('invoice-note', invoice.note || 'Không có ghi chú.');
+        updateStatusUI('current-status', invoice.status, 'status-');
+
+        // Tab: Sản phẩm
+        const productListBody = document.getElementById('product-list');
+        if (invoice.products && invoice.products.length > 0) {
+            let productsHtml = '';
+            invoice.products.forEach((p, index) => {
+                productsHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            ${p.productName ?? 'N/A'}
+                            <small class="d-block text-muted">(${(p.productDetail?.color) || ''}, ${(p.productDetail?.size) || ''})</small>
+                        </td>
+                        <td class="text-center">${p.quantity}</td>
+                        <td class="text-end">${currencyFormatter.format(p.price || 0)}</td>
+                        <td class="text-end fw-semibold">${currencyFormatter.format(p.total || 0)}</td>
+                    </tr>
+                `;
+            });
+            productListBody.innerHTML = productsHtml;
+        } else {
+            productListBody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Hóa đơn này chưa có sản phẩm.</td></tr>`;
+        }
+        setText('product-subtotal', currencyFormatter.format(invoice.subtotal || 0));
+
+        // Tab: Thanh toán
+        setText('subtotal-payment', currencyFormatter.format(invoice.subtotal || 0));
+        setText('shipping-fee', currencyFormatter.format(invoice.shipping_fee || 0));
+        setText('discount-amount', currencyFormatter.format(invoice.discount_amount || 0));
+        setText('total-amount', currencyFormatter.format(invoice.total_amount || 0));
+        setText('payment-method', invoice.payment_method);
+        updateStatusUI('payment-status', invoice.payment_status, 'payment-');
+
+        // Footer
+        setText('footer-invoice-code', invoice.code);
+
+        populatePrintData(invoice); // Crucial for print content
+        updateButtonStates(invoice.status, invoice.payment_status);
+        window.currentInvoiceStatus = invoice.status;
+    }
+
+    function populatePrintData(invoice) { // This populates the .print-only div
+        setText('print-invoice-code', invoice.code);
+        setText('print-customer-name', invoice.customer_name);
+        setText('print-customer-phone', invoice.customer_phone || 'N/A');
+        setText('print-customer-address', invoice.customer_address || 'N/A');
+        setText('print-created-date', invoice.created_date ? new Date(invoice.created_date).toLocaleDateString('vi-VN') : 'N/A');
+        setText('print-current-status', invoice.status);
+        setText('print-invoice-note', invoice.note || 'Không có');
+
+        const printProductList = document.getElementById('print-product-list');
+        if (invoice.products && invoice.products.length > 0) {
+            let productsHtml = '';
+            invoice.products.forEach((p, index) => {
+                productsHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${p.productName ?? 'N/A'} <small>(${(p.productDetail?.color) || ''}, ${(p.productDetail?.size) || ''})</small></td>
+                        <td class="text-center">${p.quantity}</td>
+                        <td class="text-end">${currencyFormatter.format(p.price || 0)}</td>
+                        <td class="text-end">${currencyFormatter.format(p.total || 0)}</td>
+                    </tr>
+                `;
+            });
+            printProductList.innerHTML = productsHtml;
+        } else {
+            printProductList.innerHTML = `<tr><td colspan="5" class="text-center">Không có sản phẩm.</td></tr>`;
+        }
+
+        setText('print-subtotal', currencyFormatter.format(invoice.subtotal || 0));
+        setText('print-shipping-fee', currencyFormatter.format(invoice.shipping_fee || 0));
+        setText('print-discount-amount', currencyFormatter.format(invoice.discount_amount || 0));
+        setText('print-total-amount', currencyFormatter.format(invoice.total_amount || 0));
+        setText('print-payment-method', invoice.payment_method);
+        setText('print-payment-status', invoice.payment_status);
+    }
+
+    async function loadInvoiceDetails() {
+        if (!invoiceId) {
+            showToast('ID hóa đơn không hợp lệ hoặc bị thiếu.', 'Lỗi Tải Dữ Liệu', 'danger');
+            return;
+        }
+        try {
+            const data = await fetchData(`${API_BASE_URL}/details/${invoiceId}`);
+            if (data.success && data.invoice) {
+                populateInvoiceData(data.invoice);
+            } else {
+                showToast(data.message || 'Không tìm thấy chi tiết hóa đơn.', 'Lỗi Dữ Liệu', 'warning');
+                // Clear content areas or show specific error messages in tabs
+                setHtml('info', '<div class="alert alert-warning p-4">Không thể tải dữ liệu cho mục này.</div>');
+                setHtml('products', '<div class="alert alert-warning p-4">Không thể tải dữ liệu cho mục này.</div>');
+                setHtml('payment', '<div class="alert alert-warning p-4">Không thể tải dữ liệu cho mục này.</div>');
+            }
+        } catch (error) {
+            setHtml('info', '<div class="alert alert-danger p-4">Lỗi kết nối hoặc xử lý dữ liệu. Vui lòng thử lại.</div>');
+            setHtml('products', '<div class="alert alert-danger p-4">Không thể tải dữ liệu sản phẩm.</div>');
+            setHtml('payment', '<div class="alert alert-danger p-4">Không thể tải dữ liệu thanh toán.</div>');
+        }
+    }
+
+    function getNextStatus(currentStatus) {
+        const statusOrder = ["Chờ xác nhận", "Đang xử lý", "Đã giao hàng", "Hoàn thành"];
+        const currentIndex = statusOrder.indexOf(currentStatus);
+        return (currentIndex !== -1 && currentIndex < statusOrder.length - 1) ? statusOrder[currentIndex + 1] : null;
+    }
+
+    // --- Action Functions ---
+    async function handleInvoiceAction(actionUrl, successMessage, actionVerb) {
+        try {
+            const result = await fetchData(actionUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ invoiceId: invoiceId, ...(actionVerb === 'confirm' && { targetStatus: getNextStatus(window.currentInvoiceStatus) }) })
+            });
+            if (result.success && result.status) {
+                updateStatusUI('current-status', result.status, 'status-'); // Update status in Info tab
+                updateStatusUI('header-current-status', result.status, 'status-'); // Update header status
+                setText('print-current-status', result.status); // Update print status
+                window.currentInvoiceStatus = result.status;
+                showToast(successMessage.replace('{status}', result.status), 'Thành Công', actionVerb === 'cancel' ? 'warning' : 'success');
+                updateButtonStates(result.status, document.getElementById('payment-status').textContent);
+            } else {
+                showToast(result.message || `Không thể ${actionVerb} hóa đơn.`, 'Lỗi Thao Tác', 'danger');
+            }
+        } catch (error) { /* Handled by fetchData */ }
+
+        if (actionVerb === 'confirm' && confirmModalEl) bootstrap.Modal.getInstance(confirmModalEl).hide();
+        if (actionVerb === 'cancel' && cancelModalEl) bootstrap.Modal.getInstance(cancelModalEl).hide();
+    }
+
+    function confirmInvoice() {
+        const nextStatus = getNextStatus(window.currentInvoiceStatus);
+        if (!nextStatus) {
+            showToast('Hóa đơn không thể chuyển sang trạng thái tiếp theo.', 'Thao tác không hợp lệ', 'warning');
+            if (confirmModalEl) bootstrap.Modal.getInstance(confirmModalEl).hide();
+            return;
+        }
+        handleInvoiceAction(`${API_BASE_URL}/confirm`, `Hóa đơn đã được cập nhật thành "{status}".`, 'confirm');
+    }
+
+    function cancelInvoice() {
+        handleInvoiceAction(`${API_BASE_URL}/cancel`, `Hóa đơn đã được chuyển sang trạng thái "{status}".`, 'cancel');
+    }
+
+    async function markAsPaid() {
+        markPaidBtn.disabled = true;
+        try {
+            const result = await fetchData(`${API_BASE_URL}/mark-paid`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ invoiceId: invoiceId })
+            });
+            if (result.success && result.status) {
+                updateStatusUI('payment-status', result.status, 'payment-');
+                setText('print-payment-status', result.status);
+                showToast('Đã đánh dấu hóa đơn là "Đã thanh toán".', 'Thanh Toán Thành Công', 'success');
+                markPaidContainer.style.display = 'none';
+            } else {
+                showToast(result.message || 'Không thể đánh dấu đã thanh toán.', 'Lỗi Thao Tác', 'danger');
+                markPaidBtn.disabled = false;
+            }
+        } catch (error) { markPaidBtn.disabled = false; }
+    }
+
+    function prepareConfirmModal() {
+        const currentStatus = window.currentInvoiceStatus;
+        const nextStatus = getNextStatus(currentStatus);
+        if (confirmActionTextEl && executeConfirmBtn) {
+            if (nextStatus) {
+                confirmActionTextEl.innerHTML = `chuyển hóa đơn sang trạng thái <strong class="text-primary">${nextStatus}</strong>`;
+                executeConfirmBtn.disabled = false;
+            } else {
+                confirmActionTextEl.textContent = "Hóa đơn đã ở trạng thái cuối cùng hoặc không thể chuyển tiếp.";
+                executeConfirmBtn.disabled = true;
+            }
+        }
+    }
+
+    function updateButtonStates(currentInvoiceStatus, currentPaymentStatus) {
+        const canBeConfirmed = ["Chờ xác nhận", "Đang xử lý", "Đã giao hàng"];
+        const canBeCancelled = ["Chờ xác nhận", "Đang xử lý"];
+        const isCompletedOrCancelled = ["Hoàn thành", "Đã hủy"];
+        const nextStatus = getNextStatus(currentInvoiceStatus);
+
+        if (confirmBtn) {
+            if (nextStatus && canBeConfirmed.includes(currentInvoiceStatus) && !isCompletedOrCancelled.includes(currentInvoiceStatus)) {
+                confirmBtn.style.display = 'inline-block';
+                confirmBtn.innerHTML = `<i class="fas fa-arrow-right me-1"></i> ${nextStatus}`;
+                confirmBtn.setAttribute('data-bs-target', '#confirmModal'); // Set modal target
+            } else {
+                confirmBtn.style.display = 'none';
+            }
+        }
+
+        if (cancelBtn) {
+            cancelBtn.style.display = (canBeCancelled.includes(currentInvoiceStatus) && !isCompletedOrCancelled.includes(currentInvoiceStatus)) ? 'inline-block' : 'none';
+            if(cancelBtn.style.display === 'inline-block') cancelBtn.setAttribute('data-bs-target', '#cancelModal');
+        }
+
+
+        if (markPaidContainer && markPaidBtn) {
+            if (currentPaymentStatus === 'Đã thanh toán' || isCompletedOrCancelled.includes(currentInvoiceStatus)) {
+                markPaidContainer.style.display = 'none';
+                markPaidBtn.disabled = true;
+            } else {
+                markPaidContainer.style.display = 'block';
+                markPaidBtn.disabled = false;
+            }
+        }
+    }
+
+    function prepareAndPrint() {
+        // Ensure print-only section is populated with latest data
+        // loadInvoiceDetails() should have already done this by calling populatePrintData()
+        document.getElementById('print-date').textContent = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour:'2-digit', minute:'2-digit' });
+        window.print();
+    }
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        document.getElementById('footer-date').textContent = new Date().toLocaleDateString('vi-VN');
+
+        if (executeConfirmBtn) executeConfirmBtn.addEventListener('click', confirmInvoice);
+        if (executeCancelBtn) executeCancelBtn.addEventListener('click', cancelInvoice);
+        if (markPaidBtn) markPaidBtn.addEventListener('click', markAsPaid);
+
+        if(confirmBtn) {
+            confirmBtn.addEventListener('click', prepareConfirmModal);
+        }
+
+        loadInvoiceDetails();
+    });
+
+    /*]]>*/
+</script>
+</body>
+</html>

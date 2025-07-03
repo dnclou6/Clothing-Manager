@@ -1,0 +1,41 @@
+<!-- templates/WebQuanLy/register-face.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đăng ký khuôn mặt</title>
+</head>
+<body>
+<h2>Đăng ký khuôn mặt cho Admin</h2>
+<video id="video" width="320" height="240" autoplay></video>
+<br>
+<button onclick="captureAndSend()">Đăng ký</button>
+<canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => video.srcObject = stream)
+        .catch(err => alert("Không thể mở camera"));
+
+    function captureAndSend() {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageBase64 = canvas.toDataURL('image/jpeg');
+
+        fetch('/acvstore/register-face', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: 'admin', // Hoặc lấy từ login session nếu có
+                image: imageBase64
+            })
+        })
+            .then(res => res.json())
+            .then(data => alert(data.message))
+            .catch(err => alert("Gửi ảnh thất bại"));
+    }
+</script>
+</body>
+</html>

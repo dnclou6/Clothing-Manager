@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div th:fragment="accountDropdown(user)">
+    <div th:if="${user != null}" class="dropdown">
+        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+           id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle fa-lg me-2 text-primary"></i>
+            <span th:text="${user.fullName}">Tên người dùng</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" aria-labelledby="accountDropdown" style="min-width: 250px;">
+            <li class="px-3 py-2">
+                <div class="fw-bold mb-1" th:text="${user.fullName}">Tên người dùng</div>
+                <div class="text-muted small" th:text="${user.email}">email@example.com</div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item text-danger" th:href="@{/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

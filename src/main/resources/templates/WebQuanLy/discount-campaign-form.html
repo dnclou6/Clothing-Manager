@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo đợt giảm giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .card-header {
+            font-weight: bold;
+        }
+        .pagination {
+            margin-bottom: 0;
+        }
+        .search-container {
+            margin-bottom: 15px;
+        }
+        .search-container h5 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .input-group-text {
+            border-right: 0;
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+    <div class="content mt-4">
+        <form th:action="@{/acvstore/discount-campaigns/create}" method="post" id="discountForm">
+            <div class="row g-3">
+                <!-- THÔNG TIN ĐỢT GIẢM GIÁ -->
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">Thông tin đợt giảm giá</div>
+                        <div class="card-body row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Mã đợt</label>
+                                <input type="text" class="form-control" name="code" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tên đợt</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">% giảm</label>
+                                <input type="number" class="form-control" name="discountPercent" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Số lượng</label>
+                                <input type="number" class="form-control" name="quantity">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ngày bắt đầu</label>
+                                <input type="datetime-local" class="form-control" name="startDate" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ngày kết thúc</label>
+                                <input type="datetime-local" class="form-control" name="endDate" required>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-end">
+                                <button type="reset" class="btn btn-outline-secondary me-2">Làm mới</button>
+                                <button type="submit" class="btn btn-success">Tạo đợt giảm giá</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHỌN SẢN PHẨM VÀ CHI TIẾT -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Danh sách sản phẩm</div>
+                        <div class="card-body">
+                            <!-- Thêm ô tìm kiếm -->
+                            <div class="search-container">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text bg-white">
+                                        <i class="fas fa-search text-secondary"></i>
+                                    </span>
+                                    <input type="text" class="form-control border-start-0" id="productSearchInput" placeholder="Nhập tên sản phẩm...">
+                                </div>
+                            </div>
+                            <div class="loading-spinner" id="productsLoading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Đang tải...</span>
+                                </div>
+                                <p class="mt-2">Đang tải dữ liệu...</p>
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllProducts"></th>
+                                    <th>Mã</th>
+                                    <th>Tên sản phẩm</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productTableBody">
+                                <!-- Hiển thị sản phẩm ở trang hiện tại cho trạng thái ban đầu -->
+                                <tr th:each="product : ${productPage.content}" th:data-id="${product.id}" class="product-row">
+                                    <td><input type="checkbox" class="product-checkbox" th:value="${product.id}"></td>
+                                    <td th:text="${product.id}"></td>
+                                    <td th:text="${product.name}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <!-- Phân trang cho chế độ không tìm kiếm -->
+                            <nav id="productPagination">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item" th:classappend="${currentProductPage == 0} ? 'disabled'">
+                                        <a class="page-link pagination-link" th:data-page="${currentProductPage - 1}" href="javascript:void(0)">Trước</a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalProductPages - 1)}"
+                                        th:classappend="${i == currentProductPage} ? 'active'">
+                                        <a class="page-link pagination-link" th:data-page="${i}" href="javascript:void(0)"
+                                           th:text="${i + 1}"></a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentProductPage + 1 == totalProductPages} ? 'disabled'">
+                                        <a class="page-link pagination-link" th:data-page="${currentProductPage + 1}" href="javascript:void(0)">Sau</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Chi tiết sản phẩm</div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllDetails"></th>
+                                    <th>Tên SP</th>
+                                    <th>Màu</th>
+                                    <th>Size</th>
+                                    <th>Giá</th>
+                                    <th>Tồn</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productDetailTableBody">
+                                <!-- Render bằng JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Thêm hidden input để lưu trữ các product detail IDs đã được chọn -->
+            <input type="hidden" id="selectedProductDetailIdsInput" name="selectedProductDetailIds" value="">
+        </form>
+    </div>
+</div>
+
+<script>
+    // Lưu trữ danh sách ID sản phẩm đã chọn vào localStorage
+    const selectedProductIds = new Set(
+        localStorage.getItem('selectedProductIds') ?
+            JSON.parse(localStorage.getItem('selectedProductIds')) :
+            []
+    );
+
+    // Lưu trữ danh sách ID chi tiết sản phẩm đã chọn
+    const selectedDetailIds = new Set(
+        localStorage.getItem('selectedDetailIds') ?
+            JSON.parse(localStorage.getItem('selectedDetailIds')) :
+            []
+    );
+
+    // Lưu trữ tất cả sản phẩm cho tìm kiếm
+    let allProducts = [];
+    let isSearchMode = false;
+
+    // Khôi phục trạng thái chọn
+    function restoreSelectedProducts() {
+        document.querySelectorAll(".product-checkbox").forEach(cb => {
+            const id = parseInt(cb.value);
+            cb.checked = selectedProductIds.has(id);
+        });
+
+        // Cập nhật selectAll checkbox
+        updateSelectAllCheckbox();
+
+        // Tải chi tiết sản phẩm
+        loadProductDetails();
+    }
+
+    // Cập nhật checkbox "Chọn tất cả"
+    function updateSelectAllCheckbox() {
+        const checkboxes = document.querySelectorAll(".product-checkbox");
+        const selectAllCheckbox = document.getElementById("selectAllProducts");
+
+        if (checkboxes.length === 0) return;
+
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+    }
+
+    // Khôi phục chi tiết sản phẩm đã chọn
+    function restoreSelectedDetails() {
+        document.querySelectorAll(".detail-checkbox").forEach(cb => {
+            const id = parseInt(cb.value);
+            cb.checked = selectedDetailIds.has(id);
+        });
+        updateDetailSelectAllCheckbox();
+    }
+
+    // Cập nhật checkbox "Chọn tất cả" cho chi tiết sản phẩm
+    function updateDetailSelectAllCheckbox() {
+        const checkboxes = document.querySelectorAll(".detail-checkbox");
+        const selectAllCheckbox = document.getElementById("selectAllDetails");
+
+        if (checkboxes.length === 0) return;
+
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        selectAllCheckbox.checked = allChecked;
+    }
+
+    // Tải chi tiết sản phẩm dựa trên danh sách đã chọn
+    function loadProductDetails() {
+        if (selectedProductIds.size === 0) {
+            document.getElementById("productDetailTableBody").innerHTML = "";
+            return;
+        }
+
+        // Lưu danh sách ID vào localStorage
+        localStorage.setItem('selectedProductIds', JSON.stringify([...selectedProductIds]));
+
+        fetch(`/acvstore/discount-campaigns/multiple-product-details?productIds=${[...selectedProductIds].join(',')}`)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById("productDetailTableBody");
+                tbody.innerHTML = "";
+                data.forEach(detail => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><input type="checkbox" value="${detail.id}" class="detail-checkbox"></td>
+                        <td>${detail.product.name}</td>
+                        <td>${detail.color.name}</td>
+                        <td>${detail.size.name}</td>
+                        <td>${detail.price}</td>
+                        <td>${detail.stockQuantity}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                // Khôi phục trạng thái đã chọn
+                restoreSelectedDetails();
+
+                // Gắn sự kiện cho các checkbox chi tiết
+                attachDetailCheckboxEvents();
+            });
+    }
+
+    // Gắn sự kiện cho các checkbox chi tiết
+    function attachDetailCheckboxEvents() {
+        document.querySelectorAll(".detail-checkbox").forEach(cb => {
+            cb.addEventListener("change", function() {
+                const id = parseInt(this.value);
+                if (this.checked) {
+                    selectedDetailIds.add(id);
+                } else {
+                    selectedDetailIds.delete(id);
+                }
+                localStorage.setItem('selectedDetailIds', JSON.stringify([...selectedDetailIds]));
+                document.getElementById("selectedProductDetailIdsInput").value = [...selectedDetailIds].join(',');
+                updateDetailSelectAllCheckbox();
+            });
+        });
+    }
+
+    // Tải tất cả sản phẩm cho tìm kiếm
+    function loadAllProducts() {
+        // Hiển thị spinner loading
+        document.getElementById("productsLoading").style.display = "block";
+
+        // API endpoint để lấy tất cả sản phẩm
+        fetch('/acvstore/api/products/all')
+            .then(res => res.json())
+            .then(data => {
+                allProducts = data;
+                // Ẩn spinner loading
+                document.getElementById("productsLoading").style.display = "none";
+            })
+            .catch(error => {
+                console.error("Lỗi khi tải sản phẩm:", error);
+                document.getElementById("productsLoading").style.display = "none";
+            });
+    }
+
+    // Hiển thị sản phẩm tìm kiếm
+    function renderSearchResults(products) {
+        const tbody = document.getElementById("productTableBody");
+        tbody.innerHTML = "";
+
+        if (products.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center">Không tìm thấy sản phẩm nào</td></tr>`;
+            return;
+        }
+
+        products.forEach(product => {
+            const row = document.createElement("tr");
+            row.className = "product-row";
+            row.dataset.id = product.id;
+            row.innerHTML = `
+                <td><input type="checkbox" class="product-checkbox" value="${product.id}" ${selectedProductIds.has(product.id) ? 'checked' : ''}></td>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Gắn lại sự kiện cho các checkbox
+        attachProductCheckboxEvents();
+    }
+
+    // Gắn sự kiện cho các checkbox sản phẩm
+    function attachProductCheckboxEvents() {
+        document.querySelectorAll(".product-checkbox").forEach(cb => {
+            cb.addEventListener("change", function() {
+                const id = parseInt(this.value);
+                if (this.checked) {
+                    selectedProductIds.add(id);
+                } else {
+                    selectedProductIds.delete(id);
+                }
+                localStorage.setItem('selectedProductIds', JSON.stringify([...selectedProductIds]));
+                updateSelectAllCheckbox();
+                loadProductDetails();
+            });
+        });
+    }
+
+    // Tìm kiếm sản phẩm từ tất cả sản phẩm đã tải
+    function searchProducts(query) {
+        if (!query || query.trim() === "") {
+            // Nếu không có query, quay về chế độ phân trang bình thường
+            document.getElementById("productPagination").style.display = "block";
+            isSearchMode = false;
+            return;
+        }
+
+        isSearchMode = true;
+        document.getElementById("productPagination").style.display = "none";
+
+        if (allProducts.length > 0) {
+            // Nếu đã tải sản phẩm, thực hiện tìm kiếm
+            const filteredProducts = allProducts.filter(product =>
+                product.name.toLowerCase().includes(query.toLowerCase())
+            );
+            renderSearchResults(filteredProducts);
+        } else {
+            // Nếu chưa tải sản phẩm, thực hiện tìm kiếm thông qua API
+            document.getElementById("productsLoading").style.display = "block";
+
+            fetch(`/acvstore/api/products/search?keyword=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(data => {
+                    renderSearchResults(data);
+                    document.getElementById("productsLoading").style.display = "none";
+                })
+                .catch(error => {
+                    console.error("Lỗi khi tìm kiếm sản phẩm:", error);
+                    document.getElementById("productsLoading").style.display = "none";
+                });
+        }
+    }
+
+    // Mã thực thi khi DOM đã sẵn sàng
+    document.addEventListener("DOMContentLoaded", function() {
+        // Khôi phục trạng thái được chọn khi trang tải
+        restoreSelectedProducts();
+
+        // Gắn sự kiện cho các checkbox sản phẩm ban đầu
+        attachProductCheckboxEvents();
+
+        // Cập nhật hidden input cho chi tiết sản phẩm đã chọn
+        document.getElementById("selectedProductDetailIdsInput").value = [...selectedDetailIds].join(',');
+
+        // Xử lý sự kiện khi checkbox "Chọn tất cả" thay đổi
+        document.getElementById("selectAllProducts")?.addEventListener("change", function() {
+            document.querySelectorAll(".product-checkbox").forEach(cb => {
+                cb.checked = this.checked;
+                const id = parseInt(cb.value);
+                if (this.checked) {
+                    selectedProductIds.add(id);
+                } else {
+                    selectedProductIds.delete(id);
+                }
+            });
+            localStorage.setItem('selectedProductIds', JSON.stringify([...selectedProductIds]));
+            updateSelectAllCheckbox();
+            loadProductDetails();
+        });
+
+        // Xử lý sự kiện khi chọn tất cả chi tiết sản phẩm
+        document.getElementById("selectAllDetails")?.addEventListener("change", function() {
+            document.querySelectorAll(".detail-checkbox").forEach(cb => {
+                cb.checked = this.checked;
+                const id = parseInt(cb.value);
+                if (this.checked) {
+                    selectedDetailIds.add(id);
+                } else {
+                    selectedDetailIds.delete(id);
+                }
+            });
+            localStorage.setItem('selectedDetailIds', JSON.stringify([...selectedDetailIds]));
+            document.getElementById("selectedProductDetailIdsInput").value = [...selectedDetailIds].join(',');
+        });
+
+        // Xử lý sự kiện phân trang
+        document.querySelectorAll(".pagination-link").forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                const page = this.getAttribute("data-page");
+                window.location.href = `/acvstore/discount-campaigns/create?page=${page}`;
+            });
+        });
+
+        // Xử lý sự kiện khi reset form
+        document.querySelector("button[type='reset']")?.addEventListener("click", function() {
+            // Xóa dữ liệu lưu trong localStorage
+            localStorage.removeItem('selectedProductIds');
+            localStorage.removeItem('selectedDetailIds');
+            selectedProductIds.clear();
+            selectedDetailIds.clear();
+
+            // Reset các checkbox và chi tiết sản phẩm
+            document.querySelectorAll(".product-checkbox").forEach(cb => cb.checked = false);
+            document.getElementById("selectAllProducts").checked = false;
+            document.querySelectorAll(".detail-checkbox").forEach(cb => cb.checked = false);
+            document.getElementById("selectAllDetails").checked = false;
+            document.getElementById("productDetailTableBody").innerHTML = "";
+            document.getElementById("selectedProductDetailIdsInput").value = "";
+
+            // Xóa nội dung ô tìm kiếm và trở về chế độ phân trang
+            document.getElementById("productSearchInput").value = "";
+            document.getElementById("productPagination").style.display = "block";
+            isSearchMode = false;
+
+            // Nếu đã tải tất cả sản phẩm, hiển thị lại trang đầu tiên
+            if (allProducts.length > 0) {
+                const firstPageProducts = allProducts.slice(0, 5); // Giả sử mỗi trang 5 sản phẩm
+                renderSearchResults(firstPageProducts);
+            }
+        });
+
+        // Xử lý tìm kiếm theo thời gian thực với debounce
+        let searchTimeout;
+        document.getElementById("productSearchInput").addEventListener("input", function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+
+            searchTimeout = setTimeout(() => {
+                searchProducts(query);
+            }, 300); // Debounce 300ms
+        });
+
+        // Tải tất cả sản phẩm khi focus vào ô tìm kiếm
+        document.getElementById("productSearchInput").addEventListener("focus", function() {
+            if (allProducts.length === 0) {
+                loadAllProducts();
+            }
+        });
+
+        // Khi gửi form, cập nhật hidden input cho các chi tiết sản phẩm đã chọn
+        document.getElementById("discountForm").addEventListener("submit", function() {
+            document.getElementById("selectedProductDetailIdsInput").value = [...selectedDetailIds].join(',');
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

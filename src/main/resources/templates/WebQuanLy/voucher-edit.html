@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh Sửa Phiếu Giảm Giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#"><i class="fas fa-store-alt me-2"></i>ACV Admin</a>
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+<div class="d-flex">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+    <div class="content p-4">
+
+        <div th:if="${errorMessage}" class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span></div>
+
+        <h2 class="mb-4">Chỉnh Sửa Phiếu Giảm Giá</h2>
+
+        <form th:action="@{'/acvstore/vouchers/edit/' + ${voucher.id}}" th:object="${voucher}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Mã phiếu:</label>
+                <input type="text" th:field="*{code}" class="form-control" readonly/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tên phiếu:</label>
+                <input type="text" th:field="*{name}" class="form-control" required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Kiểu giảm:</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:field="*{type}" value="PERCENT" id="typePercent" onchange="toggleDiscountFields()">
+                        <label class="form-check-label" for="typePercent">Giảm theo %</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:field="*{type}" value="CASH" id="typeCash" onchange="toggleDiscountFields()">
+                        <label class="form-check-label" for="typeCash">Giảm theo tiền mặt</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Giá trị giảm:</label>
+                    <div class="input-group">
+                        <input type="text" inputmode="decimal" th:field="*{discountValue}" class="form-control" id="discountValue">
+                        <span class="input-group-text" id="discountUnit">%</span>
+                    </div>
+                </div>
+                <div class="col-md-6" id="maxDiscountGroup">
+                    <label class="form-label">Giá trị giảm tối đa:</label>
+                    <div class="input-group">
+                        <input type="text" inputmode="decimal" th:field="*{maxDiscountValue}" class="form-control" id="maxDiscountValue">
+                        <span class="input-group-text">₫</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Loại phiếu:</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:field="*{public}" value="true" id="publicTrue" onchange="toggleUsageCount()">
+                        <label class="form-check-label" for="publicTrue">Công khai</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" th:field="*{public}" value="false" id="publicFalse" onchange="toggleUsageCount()">
+                        <label class="form-check-label" for="publicFalse">Cá nhân</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Lượt sử dụng:</label>
+                    <input type="text" inputmode="numeric" th:field="*{usageCount}" id="usageCount" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Đơn tối thiểu áp dụng:</label>
+                    <div class="input-group">
+                        <input type="text" inputmode="decimal" th:field="*{minOrderValue}" class="form-control" id="minOrderValue">
+                        <span class="input-group-text">₫</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Ngày bắt đầu:</label>
+                    <input type="datetime-local" th:field="*{startDate}" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày kết thúc:</label>
+                    <input type="datetime-local" th:field="*{endDate}" class="form-control">
+                </div>
+            </div>
+
+            <div id="emailOptions" style="display: none" class="mb-3">
+                <label class="form-label">Chọn khách hàng áp dụng:</label>
+                <input type="text" class="form-control mb-2" id="searchCustomerInput" placeholder="Tìm khách hàng...">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Chọn</th><th>Họ tên</th><th>Email</th><th>SĐT</th>
+                    </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                    <tr th:each="customer : ${customers}">
+                        <td><input type="checkbox" name="selectedCustomerIds" th:value="${customer.id}"/></td>
+                        <td th:text="${customer.fullName}"></td>
+                        <td th:text="${customer.email}"></td>
+                        <td th:text="${customer.phone}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail">
+                    <label class="form-check-label" for="sendMail">Gửi Email cho khách hàng</label>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                <a th:href="@{/acvstore/vouchers}" class="btn btn-secondary">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Hàm định dạng số với dấu phẩy, bỏ số 0 thừa
+    function formatNumber(value, allowDecimal) {
+        // Loại bỏ tất cả ký tự không phải số, dấu chấm
+        value = value.replace(/[^0-9.]/g, '');
+        if (!allowDecimal) {
+            value = value.replace(/\./g, ''); // Loại bỏ dấu chấm cho số nguyên
+        }
+        // Tách phần nguyên và phần thập phân
+        let parts = value.split('.');
+        let integerPart = parts[0] || '';
+        let decimalPart = '';
+        if (allowDecimal && parts[1]) {
+            // Lấy tối đa 2 chữ số thập phân, bỏ số 0 thừa
+            let decimal = parseFloat('0.' + parts[1]).toFixed(2).split('.')[1];
+            if (decimal !== '00') {
+                decimal = parseFloat('0.' + decimal).toString().split('.')[1];
+                decimalPart = '.' + decimal;
+            }
+        }
+        // Thêm dấu phẩy cho phần nguyên
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // Trả về chuỗi, bỏ phần thập phân nếu rỗng
+        return integerPart + decimalPart;
+    }
+
+    // Hàm loại bỏ dấu phẩy để lấy giá trị số
+    function parseNumber(value) {
+        // Loại bỏ dấu phẩy và trả về số
+        return parseFloat(value.replace(/,/g, '')) || '';
+    }
+
+    // Áp dụng định dạng cho các ô nhập
+    $(document).ready(function () {
+        // Các ô nhập cần định dạng
+        const inputs = [
+            { selector: '#discountValue', allowDecimal: true },
+            { selector: '#maxDiscountValue', allowDecimal: true },
+            { selector: '#minOrderValue', allowDecimal: true },
+            { selector: '#usageCount', allowDecimal: false }
+        ];
+
+        // Thêm sự kiện input và focusout cho từng ô
+        inputs.forEach(input => {
+            const $input = $(input.selector);
+            $input.on('input', function () {
+                let value = $input.val();
+                if (value) {
+                    $input.val(formatNumber(value, input.allowDecimal));
+                }
+            });
+            // Định dạng lại khi rời khỏi ô
+            $input.on('focusout', function () {
+                let value = $input.val();
+                if (value) {
+                    $input.val(formatNumber(value, input.allowDecimal));
+                }
+            });
+        });
+
+        // Xử lý trước khi gửi form để loại bỏ dấu phẩy
+        $('form').on('submit', function () {
+            inputs.forEach(input => {
+                const $input = $(input.selector);
+                const value = $input.val();
+                if (value) {
+                    $input.val(parseNumber(value));
+                }
+            });
+        });
+
+        // Hàm toggle hiện có
+        function toggleUsageCount() {
+            const isPublic = $('input[name="public"]:checked').val();
+            $('#emailOptions').toggle(isPublic === 'false');
+            $('#usageCount').prop('readonly', isPublic !== 'true');
+        }
+
+        function toggleDiscountFields() {
+            const type = $('input[name="type"]:checked').val();
+            const isPercent = type === 'PERCENT';
+            $('#discountUnit').text(isPercent ? '%' : '₫');
+            $('#maxDiscountGroup').toggle(isPercent);
+            $('#maxDiscountValue').prop('readonly', !isPercent);
+            if (!isPercent) $('#maxDiscountValue').val('');
+        }
+
+        // Khởi tạo trạng thái ban đầu
+        toggleUsageCount();
+        toggleDiscountFields();
+
+        // Sự kiện thay đổi
+        $('input[name="public"]').change(toggleUsageCount);
+        $('input[name="type"]').change(toggleDiscountFields);
+
+        // Tìm kiếm khách hàng
+        $('#searchCustomerInput').on('keyup', function () {
+            const keyword = $(this).val().toLowerCase();
+            $('#customerTableBody tr').filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(keyword) > -1);
+            });
+        });
+
+        // Định dạng giá trị ban đầu từ Thymeleaf
+        inputs.forEach(input => {
+            const $input = $(input.selector);
+            const value = $input.val();
+            if (value) {
+                $input.val(formatNumber(value, input.allowDecimal));
+            }
+        });
+    });
+</script>
+</body>
+</html>

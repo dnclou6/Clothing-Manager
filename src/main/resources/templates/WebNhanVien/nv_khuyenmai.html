@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Khuyến mãi - Nhân viên | ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/employee.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div th:replace="~{fragments/employee_sidebar :: sidebar}"></div>
+</div>
+
+<!-- Nội dung -->
+<div class="content">
+    <h2><i class="fa-solid fa-tags"></i> Quản lý Khuyến mãi</h2>
+
+    <div th:replace="~{fragments/employee_breadcrumb :: breadcrumb('Quản lý khuyến mãi')}"></div>
+
+
+    <!-- Form thêm khuyến mãi -->
+    <div class="card shadow-sm p-4 mb-4">
+        <h5><i class="fa-solid fa-plus"></i> Thêm khuyến mãi mới</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Tên khuyến mãi</label>
+                <input type="text" id="tenKhuyenMai" class="form-control" placeholder="Nhập tên khuyến mãi">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Mã khuyến mãi</label>
+                <input type="text" id="maKhuyenMai" class="form-control" placeholder="Nhập mã">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">% Giảm giá</label>
+                <input type="number" id="giamGia" class="form-control" min="0" max="100">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ngày bắt đầu</label>
+                <input type="date" id="ngayBatDau" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Ngày hết hạn</label>
+                <input type="date" id="ngayHetHan" class="form-control">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" onclick="themKhuyenMai()">
+                    <i class="fa-solid fa-check"></i> Thêm khuyến mãi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách khuyến mãi -->
+    <div class="card shadow-sm p-4">
+        <h5><i class="fa-solid fa-list"></i> Danh sách khuyến mãi</h5>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mt-3">
+                <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Tên khuyến mãi</th>
+                    <th>Mã</th>
+                    <th>Giảm (%)</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày hết hạn</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody id="danhSachKhuyenMai">
+                <!-- Dữ liệu sẽ được thêm vào đây -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let danhSachKhuyenMai = [];
+
+    function themKhuyenMai() {
+        const ten = document.getElementById("tenKhuyenMai").value.trim();
+        const ma = document.getElementById("maKhuyenMai").value.trim();
+        const giamGia = document.getElementById("giamGia").value;
+        const ngayBatDau = document.getElementById("ngayBatDau").value;
+        const ngayHetHan = document.getElementById("ngayHetHan").value;
+
+        if (!ten || !ma || !giamGia || !ngayBatDau || !ngayHetHan) {
+            alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        if (new Date(ngayBatDau) > new Date(ngayHetHan)) {
+            alert("⚠️ Ngày bắt đầu không thể sau ngày hết hạn!");
+            return;
+        }
+
+        const khuyenMai = {
+            id: danhSachKhuyenMai.length + 1,
+            ten,
+            ma,
+            giamGia,
+            ngayBatDau,
+            ngayHetHan
+        };
+
+        danhSachKhuyenMai.push(khuyenMai);
+        hienThiKhuyenMai();
+        resetForm();
+        alert("✅ Thêm khuyến mãi thành công!");
+    }
+
+    function hienThiKhuyenMai() {
+        const tbody = document.getElementById("danhSachKhuyenMai");
+        tbody.innerHTML = "";
+
+        danhSachKhuyenMai.forEach((km, index) => {
+            const row = `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${km.ten}</td>
+                    <td>${km.ma}</td>
+                    <td>${km.giamGia}%</td>
+                    <td>${km.ngayBatDau}</td>
+                    <td>${km.ngayHetHan}</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="xoaKhuyenMai(${index})">
+                            <i class="fa-solid fa-trash"></i> Xóa
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function xoaKhuyenMai(index) {
+        if (confirm("❌ Bạn có chắc muốn xóa khuyến mãi này?")) {
+            danhSachKhuyenMai.splice(index, 1);
+            hienThiKhuyenMai();
+        }
+    }
+
+    function resetForm() {
+        document.getElementById("tenKhuyenMai").value = "";
+        document.getElementById("maKhuyenMai").value = "";
+        document.getElementById("giamGia").value = "";
+        document.getElementById("ngayBatDau").value = "";
+        document.getElementById("ngayHetHan").value = "";
+    }
+</script>
+<!-- Gọi JavaScript -->
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Phân quyền - Admin ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- Navbar tài khoản -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <!-- Nội dung chính -->
+    <div class="content">
+        <h2 class="mb-4"><i class="fa-solid fa-user-shield"></i> Quản lý Phân quyền</h2>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th><i class="fa-solid fa-user"></i> Tên</th>
+                    <th><i class="fa-solid fa-envelope"></i> Email</th>
+                    <th><i class="fa-solid fa-user-tag"></i> Quyền</th>
+                    <th><i class="fa-solid fa-gear"></i> Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="userTable"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let users = [
+        { id: 1, name: 'Admin Chính', email: 'admin@acv360.com', role: 'Admin' },
+        { id: 2, name: 'Nhân viên A', email: 'staff@acv360.com', role: 'Nhân viên' },
+        { id: 3, name: 'Khách hàng B', email: 'khach@acv360.com', role: 'Khách hàng' }
+    ];
+
+    function loadUsers() {
+        const table = document.getElementById('userTable');
+        table.innerHTML = '';
+        users.forEach(user => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>
+                    <span class="badge bg-${getRoleBadge(user.role)}">${user.role}</span>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="editRole(${user.id})">
+                        <i class="fa-solid fa-pen"></i> Sửa quyền
+                    </button>
+                </td>
+            `;
+            table.appendChild(row);
+        });
+    }
+
+    function getRoleBadge(role) {
+        switch (role) {
+            case 'Admin': return 'danger';
+            case 'Nhân viên': return 'primary';
+            case 'Khách hàng': return 'success';
+            default: return 'secondary';
+        }
+    }
+
+    function editRole(id) {
+        const user = users.find(u => u.id === id);
+        const newRole = prompt(`Quyền hiện tại là "${user.role}". Nhập quyền mới (Admin, Nhân viên, Khách hàng):`);
+        if (newRole && ['Admin', 'Nhân viên', 'Khách hàng'].includes(newRole)) {
+            user.role = newRole;
+            loadUsers();
+        } else {
+            alert("Quyền không hợp lệ! Vui lòng nhập lại.");
+        }
+    }
+
+    loadUsers();
+</script>
+<!-- Gọi JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

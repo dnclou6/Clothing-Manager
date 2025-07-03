@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thống kê - Nhân viên | ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/employee.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div th:replace="~{fragments/employee_sidebar :: sidebar}"></div>
+</div>
+
+<!-- Nội dung -->
+<div class="content">
+    <h2><i class="fa-solid fa-chart-line"></i> Thống kê Doanh thu & Sản phẩm</h2>
+
+    <div th:replace="~{fragments/employee_breadcrumb :: breadcrumb('Thống kê')}"></div>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa-solid fa-money-bill-wave"></i> Doanh thu hôm nay</h5>
+                    <p class="card-text fs-4" id="doanhThuHomNay">0đ</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa-solid fa-box"></i> Đơn hàng hôm nay</h5>
+                    <p class="card-text fs-4" id="donHangHomNay">0 đơn</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa-solid fa-boxes-stacked"></i> Sản phẩm tồn kho</h5>
+                    <p class="card-text fs-4" id="tonKho">0 sản phẩm</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mt-4"><i class="fa-solid fa-chart-bar"></i> Biểu đồ doanh số</h4>
+    <canvas id="salesChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Dữ liệu giả lập - có thể thay thế bằng API động
+    let doanhThuHomNay = 5000000;
+    let donHangHomNay = 25;
+    let tonKho = 320;
+
+    // Cập nhật giao diện với dữ liệu
+    document.getElementById("doanhThuHomNay").textContent = doanhThuHomNay.toLocaleString("vi-VN") + "đ";
+    document.getElementById("donHangHomNay").textContent = donHangHomNay + " đơn";
+    document.getElementById("tonKho").textContent = tonKho + " sản phẩm";
+
+    // Biểu đồ doanh số
+    const ctx = document.getElementById("salesChart").getContext("2d");
+    const salesChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"],
+            datasets: [{
+                label: "Doanh thu (VNĐ)",
+                data: [5000000, 4000000, 3000000, 7000000, 6000000, 8000000, 5500000],
+                backgroundColor: "rgba(54, 162, 235, 0.7)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw.toLocaleString("vi-VN") + " VNĐ";
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString("vi-VN") + " VNĐ";
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+<!-- Gọi JavaScript -->
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

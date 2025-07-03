@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh mục sản phẩm - Admin ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+<!-- Navbar tài khoản -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 justify-content-between fixed-top">
+    <a class="navbar-brand fw-bold text-primary" href="#">
+        <i class="fas fa-store-alt me-2"></i>ACV Admin
+    </a>
+
+    <div class="d-flex align-items-center">
+        <div th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </div>
+</nav>
+
+<div class="d-flex">
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <div class="content flex-grow-1">
+        <h2 class="mb-4"><i class="fa-solid fa-tags"></i> Danh mục sản phẩm</h2>
+
+        <form id="categoryForm" class="mb-4">
+            <div class="mb-3">
+                <label for="categoryName" class="form-label">Tên danh mục</label>
+                <input type="text" class="form-control" id="categoryName" required>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm danh mục</button>
+        </form>
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody id="categoryTable"></tbody>
+        </table>
+    </div>
+</div>
+<!-- Gọi JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+
+</body>
+</html>

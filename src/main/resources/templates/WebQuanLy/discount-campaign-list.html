@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Danh sách đợt giảm giá</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <style>
+    .table th, .table td {
+      vertical-align: middle;
+    }
+    .badge {
+      font-size: 0.85rem;
+      padding: 0.5em 0.75em;
+    }
+    .card-header {
+      background-color: #f8f9fa;
+    }
+    .filter-box {
+      border-radius: 6px;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .btn-filter {
+      min-width: 100px;
+    }
+    .pagination {
+      margin-bottom: 0;
+    }
+    .action-buttons .btn {
+      padding: 0.25rem 0.5rem;
+      margin-right: 0.25rem;
+    }
+    .action-buttons .btn:last-child {
+      margin-right: 0;
+    }
+    .btn-sm i {
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex">
+  <!-- Sidebar -->
+  <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+  <div class="content mt-4">
+    <!-- Bộ lọc -->
+    <div class="card mb-4 filter-box">
+      <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Bộ lọc</h5>
+      </div>
+      <div class="card-body">
+        <form class="row g-3" method="get" th:action="@{/acvstore/discount-campaigns}" id="filterForm">
+          <div class="col-md-4">
+            <label class="form-label small">Từ khóa</label>
+            <input type="text" name="keyword" class="form-control" placeholder="Nhập tên, mã hoặc giá trị giảm"
+                   th:value="${keyword}">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Từ ngày</label>
+            <input type="date" name="startDate" class="form-control"
+                   th:value="${startDate != null} ? ${#temporals.format(startDate.toInstant(), 'yyyy-MM-dd')} : ''">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Đến ngày</label>
+            <input type="date" name="endDate" class="form-control"
+                   th:value="${endDate != null} ? ${#temporals.format(endDate.toInstant(), 'yyyy-MM-dd')} : ''">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Trạng thái</label>
+            <select name="status" class="form-select">
+              <option value="">Tất cả trạng thái</option>
+              <option value="ONGOING" th:selected="${status == 'ONGOING'}">Đang diễn ra</option>
+              <option value="UPCOMING" th:selected="${status == 'UPCOMING'}">Sắp diễn ra</option>
+              <option value="ENDED" th:selected="${status == 'ENDED'}">Đã kết thúc</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small">Giá trị giảm</label>
+            <select name="discountLevel" class="form-select">
+              <option value="">Tất cả giá trị</option>
+              <option value="10" th:selected="${discountLevel == '10'}">Trên 10%</option>
+              <option value="30" th:selected="${discountLevel == '30'}">Trên 30%</option>
+              <option value="50" th:selected="${discountLevel == '50'}">Trên 50%</option>
+            </select>
+          </div>
+          <div class="col-md-12 d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-outline-secondary me-2" id="resetFilterBtn">Đặt lại</button>
+            <button type="submit" class="btn btn-primary btn-filter">Tìm kiếm</button>
+          </div>
+
+          <!-- Thêm input ẩn để lưu trữ trang hiện tại -->
+          <input type="hidden" name="page" id="pageInput" th:value="${currentPage}">
+          <input type="hidden" name="size" value="10">
+        </form>
+      </div>
+    </div>
+
+    <!-- Danh sách đợt giảm giá -->
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0">Danh sách đợt giảm giá</h5>
+        <a th:href="@{/acvstore/discount-campaigns/create}" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-1"></i>Thêm mới
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover mb-0">
+          <thead class="table-light">
+          <tr class="text-center">
+            <th width="5%">STT</th>
+            <th width="10%">Mã đợt</th>
+            <th width="25%">Tên đợt giảm giá</th>
+            <th width="10%">Giá trị</th>
+            <th width="15%">Thời gian bắt đầu</th>
+            <th width="15%">Thời gian kết thúc</th>
+            <th width="10%">Trạng thái</th>
+            <th width="10%">Thao tác</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="campaign, iterStat : ${campaignList}" class="align-middle text-center">
+            <td th:text="${iterStat.count + currentPage * 10}"></td>
+            <td th:text="${campaign.code}"></td>
+            <td th:text="${campaign.name}" class="text-start"></td>
+            <td th:text="${campaign.discountPercent + '%'}"></td>
+            <td th:text="${#dates.format(campaign.startDate, 'HH:mm:ss dd/MM/yyyy')}"></td>
+            <td th:text="${#dates.format(campaign.endDate, 'HH:mm:ss dd/MM/yyyy')}"></td>
+            <td>
+              <span class="badge"
+                    th:classappend="${campaign.status == 'ONGOING'} ? 'bg-success' :
+                                  (${campaign.status == 'UPCOMING'} ? 'bg-primary' :
+                                  (${campaign.status == 'ENDED'} ? 'bg-secondary' : ''))"
+                    th:text="${campaign.status == 'ONGOING'} ? 'Đang diễn ra' :
+                           (${campaign.status == 'UPCOMING'} ? 'Sắp diễn ra' :
+                           (${campaign.status == 'ENDED'} ? 'Đã kết thúc' : ''))">
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <a th:href="@{'/acvstore/discount-campaigns/edit/' + ${campaign.id}}" class="btn btn-sm btn-warning" title="Sửa">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-danger delete-btn"
+                        th:data-id="${campaign.id}" th:data-name="${campaign.name}" title="Xóa">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr th:if="${#lists.isEmpty(campaignList)}">
+            <td colspan="8" class="text-center py-4">Không có đợt giảm giá nào</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Thêm phân trang -->
+      <div class="card-footer" th:if="${totalPages > 0}">
+        <nav>
+          <ul class="pagination justify-content-center mb-0">
+            <!-- Nút Previous -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+              <a class="page-link page-nav" href="#" data-page="prev" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <!-- Các số trang -->
+            <li class="page-item" th:each="i: ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${currentPage == i} ? 'active' : ''">
+              <a class="page-link page-nav" href="#" th:data-page="${i}" th:text="${i + 1}"></a>
+            </li>
+
+            <!-- Nút Next -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+              <a class="page-link page-nav" href="#" data-page="next" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal xác nhận xóa -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xác nhận xóa</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Bạn có chắc chắn muốn xóa đợt giảm giá <span id="campaignNameToDelete" class="fw-bold"></span>?</p>
+        <p class="text-danger mb-0">Hành động này không thể hoàn tác.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Xác nhận xóa</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap + Icon -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý nút phân trang
+    const pageLinks = document.querySelectorAll('.page-nav');
+    const pageInput = document.getElementById('pageInput');
+    const currentPage = parseInt(pageInput.value);
+    const totalPages = [[${totalPages}]];
+
+    pageLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        let targetPage = this.getAttribute('data-page');
+
+        if (targetPage === 'prev') {
+          targetPage = Math.max(0, currentPage - 1);
+        } else if (targetPage === 'next') {
+          targetPage = Math.min(totalPages - 1, currentPage + 1);
+        } else {
+          targetPage = parseInt(targetPage);
+        }
+
+        pageInput.value = targetPage;
+        document.getElementById('filterForm').submit();
+      });
+    });
+
+    // Xử lý nút reset bộ lọc
+    document.getElementById('resetFilterBtn').addEventListener('click', function() {
+      const form = document.getElementById('filterForm');
+
+      // Reset các input và select
+      form.querySelectorAll('input[type="text"], input[type="date"], select').forEach(input => {
+        input.value = '';
+      });
+
+      // Reset trang về 0
+      document.getElementById('pageInput').value = '0';
+
+      // Submit form
+      form.submit();
+    });
+
+    // Xử lý nút xóa và hiện modal xác nhận
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const campaignId = this.getAttribute('data-id');
+        const campaignName = this.getAttribute('data-name');
+
+        document.getElementById('campaignNameToDelete').textContent = campaignName;
+        document.getElementById('confirmDeleteBtn').href = '/acvstore/discount-campaigns/delete/' + campaignId;
+
+        deleteModal.show();
+      });
+    });
+  });
+</script>
+</body>
+</html>

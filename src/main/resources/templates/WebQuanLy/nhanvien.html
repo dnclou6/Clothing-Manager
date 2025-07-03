@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhân viên - Admin ACV 360</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/admin_sidebar :: sidebar}"></div>
+
+    <!-- Nội dung chính -->
+    <div class="content">
+        <h2>Danh sách nhân viên</h2>
+        <a href="/acvstore/nhanvien/add" class="btn btn-primary mb-3">Thêm nhân viên</a>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên đăng nhập</th>
+                <th>Mật khẩu</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Mã nhân viên</th>
+                <th>Ngày vào làm</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="employee : ${employees}">
+                <td th:text="${employee.id}"></td>
+                <td th:text="${employee.user.username}"></td>
+                <td th:text="${employee.user.password}"></td>
+                <td th:text="${employee.user.fullName}"></td>
+                <td th:text="${employee.user.email}"></td>
+                <td th:text="${employee.user.phone}"></td>
+                <td th:text="${employee.employeeCode}"></td>
+                <td th:text="${employee.hireDate}"></td>
+                <td>
+                    <span th:text="${employee.status} ? 'Đang hoạt động' : 'Ngừng hoạt động'"
+                          th:class="${employee.status} ? 'badge bg-success' : 'badge bg-danger'"></span>
+                </td>
+                <td>
+                    <a th:href="@{/acvstore/nhanvien/edit/{id}(id=${employee.id})}"
+                       class="btn btn-warning btn-sm"
+                       title="Sửa">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>
+                    <a th:href="@{/acvstore/nhanvien/delete/{id}(id=${employee.id})}"
+                       class="btn btn-danger btn-sm"
+                       title="Xóa"
+                       onclick="return confirm('Bạn có chắc muốn xóa?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                    <a th:href="@{/acvstore/nhanvien/toggle-status/{id}(id=${employee.id})}"
+                       class="btn btn-sm"
+                       th:class="${employee.status} ? 'btn-secondary' : 'btn-success'"
+                       th:title="${employee.status} ? 'Ngừng hoạt động' : 'Kích hoạt'"
+                       onclick="return confirm('Bạn có chắc muốn thay đổi trạng thái?')">
+                        <i class="fas fa-power-off"></i>
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${employees.isEmpty()}">
+                <td colspan="10" class="text-center">Không có nhân viên nào để hiển thị.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Gọi JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

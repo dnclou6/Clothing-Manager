@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACV 360 - Chi tiết Sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        .navbar { background-color: #EE4D2D; }
+        .navbar a { color: white !important; }
+        .footer { background-color: #333; color: white; padding: 20px 0; margin-top: auto; text-align: center; }
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48%;
+            font-size: 16px;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .btn-cart { background-color: #FFC107; color: black; }
+        .btn-buy { background-color: #EE4D2D; color: white; }
+        .btn-cart i, .btn-buy i { margin-right: 5px; }
+        #productImage { max-width: 100%; height: auto; display: block; }
+        .container { flex: 1; }
+    </style>
+</head>
+<body onload="loadProductDetails()">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">ACV 360</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="sanpham.html">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" href="giohang.html">Giỏ hàng</a></li>
+                <li class="nav-item"><a class="nav-link" href="donhang.html">Đơn hàng</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Chi tiết sản phẩm -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-5">
+            <img id="productImage" src="" alt="Sản phẩm" class="img-fluid">
+        </div>
+        <div class="col-md-7">
+            <h3 id="productName">Tên sản phẩm</h3>
+            <p>Giá: <strong id="productPrice">0</strong> VNĐ</p>
+            <p>Chất liệu: Cotton 100%</p>
+
+            <!-- Chọn Size -->
+            <div class="mb-3">
+                <label for="sizeSelect" class="form-label">Chọn Size:</label>
+                <select id="sizeSelect" class="form-select">
+                    <option value="">-- Chọn size --</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select>
+            </div>
+
+            <!-- Chọn Màu -->
+            <div class="mb-3">
+                <label for="colorSelect" class="form-label">Chọn Màu:</label>
+                <select id="colorSelect" class="form-select">
+                    <option value="">-- Chọn màu --</option>
+                    <option value="Đen">Đen</option>
+                    <option value="Trắng">Trắng</option>
+                    <option value="Xám">Xám</option>
+                </select>
+            </div>
+
+            <!-- Nhập số lượng -->
+            <div class="mb-3">
+                <label for="quantityInput" class="form-label">Số lượng:</label>
+                <input type="number" id="quantityInput" class="form-control" value="1" min="1">
+            </div>
+
+            <!-- Nút thêm vào giỏ hàng và mua ngay -->
+            <div class="d-flex justify-content-between">
+                <button class="btn-action btn-cart" onclick="addToCart()"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng</button>
+                <button class="btn-action btn-buy" onclick="buyNow()"><i class="fa-solid fa-credit-card"></i> Mua ngay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2025 ACV 360 - Hệ thống bán hàng trực tuyến</p>
+        <p>Hotline: 0969.469.018 | Email: support@acv360.com</p>
+        <p>Chính sách thanh toán | Bảo mật thông tin | Điều khoản sử dụng</p>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    function addToCart() {
+        const name = document.getElementById("productName").innerText;
+        const price = document.getElementById("productPrice").innerText;
+        const size = document.getElementById('sizeSelect').value;
+        const color = document.getElementById('colorSelect').value;
+        const quantity = document.getElementById('quantityInput').value;
+
+        if (!size || !color) {
+            alert('Vui lòng chọn đầy đủ Size và Màu trước khi thêm vào giỏ hàng!');
+            return;
+        }
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push({ name, price, size, color, quantity });
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        alert(`Đã thêm vào giỏ hàng:\n- Sản phẩm: ${name}\n- Giá: ${price} VNĐ\n- Size: ${size}\n- Màu: ${color}\n- Số lượng: ${quantity}`);
+    }
+
+    function buyNow() {
+        alert('Vui lòng đăng nhập để mua hàng.');
+        window.location.href = 'login.html';
+    }
+</script>
+
+</body>
+</html>
